@@ -40,6 +40,7 @@ The project emphasizes a modern user experience, scalable client-side state mana
 - Dashboard with a real-time activity feed
 - Drag-and-drop Kanban boards
 - Custom Kanban status columns
+- subtasks
 - Task CRUD, assignment, priority labels, and due dates
 - Deadline cron jobs
 
