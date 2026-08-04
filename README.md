@@ -56,8 +56,6 @@ The project emphasizes a modern user experience, scalable client-side state mana
 - Notifications
 - Dashboard analytics
 
-## Product Goals
+## Figma
 
-- Keep project and task workflows clear, fast, and collaborative.
-- Make ownership, priority, and deadlines easy to understand at a glance.
-- Provide a flexible foundation that can grow with a software team.
+https://www.figma.com/design/inWrQeiQj0BAcK3vScZCro/TaskMatrix-%E2%80%94-Agile-Project-Management?node-id=3-2&t=wA9a9OmVHwyOuJNT-1
