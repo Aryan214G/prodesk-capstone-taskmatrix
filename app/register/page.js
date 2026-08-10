@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 
 export default function RegisterPage() {
@@ -18,18 +18,21 @@ export default function RegisterPage() {
         setError("");
         setLoading(true);
 
-        try{
+        try {
             const userCredential = await createUserWithEmailAndPassword(
                 auth,
                 email,
                 password
             );
 
+            await updateProfile(userCredential.user, {
+                displayName: name,
+            });
+
             console.log("Registered user:", userCredential.user);
 
-            // We'll store the user's name properly later.
             window.location.href = "/dashboard";
-        } 
+        }
         catch (error) {
             console.error(error);
 
@@ -38,14 +41,14 @@ export default function RegisterPage() {
             }
             else if (error.code === "auth/weak-password") {
                 setError("Password must be at least 6 characters.");
-            } 
+            }
             else if (error.code === "auth/invalid-email") {
                 setError("Please enter a valid email address.");
-            } 
+            }
             else {
                 setError("Registration failed. Please try again.");
             }
-        } 
+        }
         finally {
             setLoading(false);
         }
