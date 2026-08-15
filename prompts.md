@@ -12,4 +12,6 @@
 
 2) Help me resolve this error
 
-3) 
+## Sprint 15
+
+1) Help me plan a firestore schema for TaskMatrix based on my project, task, member, activity and Kanban requirements mentioned in the README.
