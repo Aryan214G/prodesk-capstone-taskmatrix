@@ -69,10 +69,11 @@ export default function RegisterPage() {
     }
 
     return (
-        <main>
+        <main className="auth-page">
+            <section className="auth-card">
             <h1>Create your TaskMatrix account</h1>
 
-            <form onSubmit={handleSubmit}>
+            <form className="auth-form" onSubmit={handleSubmit}>
                 <input
                     type="text"
                     placeholder="Name"
@@ -97,16 +98,17 @@ export default function RegisterPage() {
                     required
                 />
 
-                <button type="submit" disabled={loading}>
+                <button className="button" type="submit" disabled={loading}>
                     {loading ? "Creating account..." : "Create account"}
                 </button>
             </form>
 
-            {error && <p>{error}</p>}
+            {error && <p className="form-message form-error">{error}</p>}
 
             <p>
                 Already have an account? <Link href="/login">Login</Link>
             </p>
+            </section>
         </main>
     );
 }

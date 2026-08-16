@@ -36,20 +36,21 @@ export default function SubtaskList({ subtasks = [], onChange }) {
     }
 
     return (
-        <div>
+        <div className="subtask-list">
             <h3>Subtasks</h3>
 
             {subtasks.map((subtask) => (
-                <div key={subtask.id}>
+                <div className="subtask-item" key={subtask.id}>
                     <input
                         type="checkbox"
                         checked={subtask.completed}
                         onChange={() => toggleSubtask(subtask.id)}
                     />
 
-                    <span>{subtask.title}</span>
+                    <span className={subtask.completed ? "is-complete" : ""}>{subtask.title}</span>
 
                     <button
+                        className="text-button danger-text"
                         type="button"
                         onClick={() => deleteSubtask(subtask.id)}
                     >
@@ -58,7 +59,7 @@ export default function SubtaskList({ subtasks = [], onChange }) {
                 </div>
             ))}
 
-            <div>
+            <div className="inline-form">
                 <input
                     type="text"
                     placeholder="Add subtask"
@@ -66,7 +67,7 @@ export default function SubtaskList({ subtasks = [], onChange }) {
                     onChange={(event) => setTitle(event.target.value)}
                 />
 
-                <button type="button" onClick={addSubtask}>
+                <button className="button button-secondary" type="button" onClick={addSubtask}>
                     Add
                 </button>
             </div>

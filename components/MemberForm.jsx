@@ -34,7 +34,7 @@ export default function MemberForm({ projectId }) {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form className="panel member-form" onSubmit={handleSubmit}>
       <h3>Add member</h3>
 
       <input
@@ -45,11 +45,11 @@ export default function MemberForm({ projectId }) {
         required
       />
 
-      <button type="submit" disabled={loading}>
+      <button className="button" type="submit" disabled={loading}>
         {loading ? "Adding..." : "Add member"}
       </button>
 
-      {message && <p>{message}</p>}
+      {message && <p className="form-message">{message}</p>}
     </form>
   );
 }

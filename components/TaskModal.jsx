@@ -42,11 +42,11 @@ export default function TaskModal({ task, onClose, onSave }) {
     }
 
     return (
-        <div>
-            <div>
-                <h2>Edit Task</h2>
+        <div className="modal-backdrop" role="presentation">
+            <div className="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="task-modal-title">
+                <h2 id="task-modal-title">Edit Task</h2>
 
-                <form onSubmit={handleSubmit}>
+                <form className="modal-form" onSubmit={handleSubmit}>
                     <input
                         value={title}
                         onChange={(event) => setTitle(event.target.value)}
@@ -91,15 +91,16 @@ export default function TaskModal({ task, onClose, onSave }) {
                         onChange={setSubtasks}
                     />
 
-                    <div>
+                    <div className="label-editor">
                         <h3>Labels</h3>
 
-                        <div>
+                        <div className="label-list">
                             {labels.map((label) => (
-                                <span key={label}>
+                                <span className="label-chip" key={label}>
                                     {label}
 
                                     <button
+                                        className="chip-remove"
                                         type="button"
                                         onClick={() =>
                                             setLabels((current) =>
@@ -113,36 +114,41 @@ export default function TaskModal({ task, onClose, onSave }) {
                             ))}
                         </div>
 
-                        <input
-                            value={labelInput}
-                            onChange={(event) => setLabelInput(event.target.value)}
-                            placeholder="Add label"
-                        />
+                        <div className="inline-form">
+                            <input
+                                value={labelInput}
+                                onChange={(event) => setLabelInput(event.target.value)}
+                                placeholder="Add label"
+                            />
 
-                        <button
-                            type="button"
-                            onClick={() => {
-                                const label = labelInput.trim();
+                            <button
+                                className="button button-secondary"
+                                type="button"
+                                onClick={() => {
+                                    const label = labelInput.trim();
 
-                                if (!label || labels.includes(label)) {
-                                    return;
-                                }
+                                    if (!label || labels.includes(label)) {
+                                        return;
+                                    }
 
-                                setLabels((current) => [...current, label]);
-                                setLabelInput("");
-                            }}
-                        >
-                            Add label
-                        </button>
+                                    setLabels((current) => [...current, label]);
+                                    setLabelInput("");
+                                }}
+                            >
+                                Add label
+                            </button>
+                        </div>
                     </div>
 
-                    <button type="submit">
-                        Save changes
-                    </button>
+                    <div className="modal-actions">
+                        <button className="button" type="submit">
+                            Save changes
+                        </button>
 
-                    <button type="button" onClick={onClose}>
-                        Cancel
-                    </button>
+                        <button className="button button-secondary" type="button" onClick={onClose}>
+                            Cancel
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>

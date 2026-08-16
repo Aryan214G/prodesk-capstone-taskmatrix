@@ -70,44 +70,65 @@ export default function DashboardPage() {
 
   return (
     <AuthGuard>
-      <main>
-        <h1>TaskMatrix Dashboard</h1>
-        <p>Welcome to your project workspace.</p>
-
-        <button onClick={handleLogout}>
-          Logout
-        </button>
-
-        <ProjectForm
-          onCreated={(project) => {
-            setProjects((current) => [project, ...current]);
-          }}
-        />
-
-        {projects.map((project) => (
-          <div key={project.id}>
-            <h3>{project.name}</h3>
-
-            <p>{project.description}</p>
-
-            <Link href={`/projects/${project.id}`}>
-              Open project
-            </Link>
+      <main className="app-shell dashboard-page">
+        <header className="page-header dashboard-header">
+          <div>
+            <h1>TaskMatrix Dashboard</h1>
+            <p>Welcome to your project workspace.</p>
           </div>
-        ))}
 
-        <section>
-          <h2>Recent Activity</h2>
+          <button className="button button-secondary" onClick={handleLogout}>
+            Logout
+          </button>
+        </header>
 
-          {activities.length === 0 ? (
-            <p>No recent activity.</p>
-          ) : (
-            activities.slice(0, 10).map((activity) => (
-              <div key={activity.id}>
-                <strong>{activity.userName}</strong>{" "}
-                {activity.message}
+        <div className="dashboard-grid">
+          <ProjectForm
+            onCreated={(project) => {
+              setProjects((current) => [project, ...current]);
+            }}
+          />
+
+          <section className="panel activity-feed">
+            <div className="section-heading">
+              <h2>Recent Activity</h2>
+            </div>
+
+            {activities.length === 0 ? (
+              <p className="empty-state">No recent activity.</p>
+            ) : (
+              <div className="activity-list">
+                {activities.slice(0, 10).map((activity) => (
+                  <div className="activity-item" key={activity.id}>
+                    <p>
+                      <strong>{activity.userName}</strong> {activity.message}
+                    </p>
+                  </div>
+                ))}
               </div>
-            ))
+            )}
+          </section>
+        </div>
+
+        <section className="projects-section">
+          <div className="section-heading">
+            <h2>Projects</h2>
+          </div>
+
+          {projects.length === 0 ? (
+            <p className="empty-state panel">Create your first project to start organizing work.</p>
+          ) : (
+            <div className="project-grid">
+              {projects.map((project) => (
+                <article className="project-card" key={project.id}>
+                  <h3>{project.name}</h3>
+                  <p>{project.description}</p>
+                  <Link className="text-link" href={`/projects/${project.id}`}>
+                    Open project
+                  </Link>
+                </article>
+              ))}
+            </div>
           )}
         </section>
       </main>

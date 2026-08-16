@@ -66,19 +66,22 @@ export default function ProjectPage() {
     }, [projectId]);
 
     if (loading) {
-        return <p>Loading project...</p>;
+        return <p className="page-message">Loading project...</p>;
     }
 
     if (!project) {
-        return <p>Project not found.</p>;
+        return <p className="page-message">Project not found.</p>;
     }
 
     return (
         <AuthGuard>
-            <main>
-                <h1>{project.name}</h1>
-
-                {project.description && <p>{project.description}</p>}
+            <main className="app-shell project-page">
+                <header className="page-header project-header">
+                    <div>
+                        <h1>{project.name}</h1>
+                        {project.description && <p>{project.description}</p>}
+                    </div>
+                </header>
 
                 <TaskForm
                     projectId={projectId}
@@ -88,12 +91,15 @@ export default function ProjectPage() {
                     }}
                 />
 
-                <h2>Tasks</h2>
+                <section className="tasks-section">
+                    <div className="section-heading">
+                        <h2>Tasks</h2>
+                    </div>
 
-                <TaskList
-                    tasks={tasks}
-                    onEdit={(task) => setSelectedTask(task)}
-                    onDelete={async (taskId) => {
+                    <TaskList
+                        tasks={tasks}
+                        onEdit={(task) => setSelectedTask(task)}
+                        onDelete={async (taskId) => {
                         const confirmed = window.confirm(
                             "Are you sure you want to delete this task?"
                         );
@@ -122,9 +128,9 @@ export default function ProjectPage() {
                         } catch (error) {
                             console.error("Failed to delete task:", error);
                         }
-                    }}
+                        }}
 
-                    onStatusChange={async (taskId, newStatus) => {
+                        onStatusChange={async (taskId, newStatus) => {
                         const task = tasks.find((item) => item.id === taskId);
 
                         if (!task) return;
@@ -153,8 +159,9 @@ export default function ProjectPage() {
                         } catch (error) {
                             console.error("Failed to update task status:", error);
                         }
-                    }}
-                />
+                        }}
+                    />
+                </section>
                 <TaskModal
                     task={selectedTask}
                     onClose={() => setSelectedTask(null)}

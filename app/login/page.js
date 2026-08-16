@@ -41,10 +41,11 @@ export default function LoginPage() {
   }
 
   return (
-    <main>
+    <main className="auth-page">
+      <section className="auth-card">
       <h1>Login to TaskMatrix</h1>
 
-      <form onSubmit={handleSubmit}>
+      <form className="auth-form" onSubmit={handleSubmit}>
         <input
           type="email"
           placeholder="Email"
@@ -61,16 +62,17 @@ export default function LoginPage() {
           required
         />
 
-        <button type="submit" disabled={loading}>
+        <button className="button" type="submit" disabled={loading}>
           {loading ? "Logging in..." : "Login"}
         </button>
       </form>
 
-      {error && <p>{error}</p>}
+      {error && <p className="form-message form-error">{error}</p>}
 
       <p>
         Don't have an account? <Link href="/register">Register</Link>
       </p>
+      </section>
     </main>
   );
 }

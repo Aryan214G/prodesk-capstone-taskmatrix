@@ -72,7 +72,7 @@ export default function TaskForm({
     }
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form className="panel task-form" onSubmit={handleSubmit}>
             <h2>Create task</h2>
 
             <input
@@ -128,15 +128,16 @@ export default function TaskForm({
                 onChange={(event) => setDueDate(event.target.value)}
             />
 
-            <div>
+            <div className="label-editor">
                 <h3>Labels</h3>
 
-                <div>
+                <div className="label-list">
                     {labels.map((label) => (
-                        <span key={label}>
+                        <span className="label-chip" key={label}>
                             {label}
 
                             <button
+                                className="chip-remove"
                                 type="button"
                                 onClick={() =>
                                     setLabels((current) =>
@@ -150,30 +151,33 @@ export default function TaskForm({
                     ))}
                 </div>
 
-                <input
-                    value={labelInput}
-                    onChange={(event) => setLabelInput(event.target.value)}
-                    placeholder="Add label"
-                />
+                <div className="inline-form">
+                    <input
+                        value={labelInput}
+                        onChange={(event) => setLabelInput(event.target.value)}
+                        placeholder="Add label"
+                    />
 
-                <button
-                    type="button"
-                    onClick={() => {
-                        const label = labelInput.trim();
+                    <button
+                        className="button button-secondary"
+                        type="button"
+                        onClick={() => {
+                            const label = labelInput.trim();
 
-                        if (!label || labels.includes(label)) {
-                            return;
-                        }
+                            if (!label || labels.includes(label)) {
+                                return;
+                            }
 
-                        setLabels((current) => [...current, label]);
-                        setLabelInput("");
-                    }}
-                >
-                    Add label
-                </button>
+                            setLabels((current) => [...current, label]);
+                            setLabelInput("");
+                        }}
+                    >
+                        Add label
+                    </button>
+                </div>
             </div>
 
-            <button type="submit" disabled={loading}>
+            <button className="button task-submit" type="submit" disabled={loading}>
                 {loading ? "Creating..." : "Create task"}
             </button>
         </form>

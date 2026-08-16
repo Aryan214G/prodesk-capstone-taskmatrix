@@ -37,3 +37,7 @@
 11) Help me add drag and drop to my TaskMatrix Kanban board.
 
 12) subtasks does not show up in firestore. What could be the reason?
+
+13) How should I handle adding and removing labels in a React form without allowing duplicate labels?
+
+14) How should I structure project members in firestore so I can assign tasks to them?

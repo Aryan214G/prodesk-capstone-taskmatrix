@@ -39,7 +39,7 @@ export default function ProjectForm({ onCreated }) {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form className="panel project-form" onSubmit={handleSubmit}>
       <h2>Create project</h2>
 
       <input
@@ -56,7 +56,7 @@ export default function ProjectForm({ onCreated }) {
         onChange={(event) => setDescription(event.target.value)}
       />
 
-      <button type="submit" disabled={loading}>
+      <button className="button" type="submit" disabled={loading}>
         {loading ? "Creating..." : "Create project"}
       </button>
     </form>

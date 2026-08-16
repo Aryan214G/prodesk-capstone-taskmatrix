@@ -38,15 +38,16 @@ function TaskCard({ task, onEdit, onDelete, dragging = false }) {
     >
       <h3>{task.title}</h3>
 
-      {task.description && <p>{task.description}</p>}
+      {task.description && <p className="task-description">{task.description}</p>}
 
-      <p>{task.priority}</p>
+      <p className={`priority-pill priority-${task.priority}`}>{task.priority}</p>
 
-      {task.dueDate && <p>Due: {task.dueDate}</p>}
+      {task.dueDate && <p className="task-date">Due {task.dueDate}</p>}
 
       {!dragging && (
-        <div>
+        <div className="task-card-actions">
           <button
+            className="button button-compact button-secondary"
             type="button"
             onPointerDown={(event) => event.stopPropagation()}
             onClick={() => onEdit(task)}
@@ -55,6 +56,7 @@ function TaskCard({ task, onEdit, onDelete, dragging = false }) {
           </button>
 
           <button
+            className="button button-compact button-danger"
             type="button"
             onPointerDown={(event) => event.stopPropagation()}
             onClick={() => onDelete(task.id)}
@@ -81,7 +83,10 @@ function KanbanColumn({ column, tasks, onEdit, onDelete }) {
         opacity: isOver ? 0.7 : 1,
       }}
     >
-      <h2>{column.title}</h2>
+      <div className="column-header">
+        <h2>{column.title}</h2>
+        <span>{tasks.length}</span>
+      </div>
 
       <div className="kanban-tasks">
         {tasks.map((task) => (
