@@ -25,3 +25,7 @@
 5) I am getting a "Missing or insufficient permissions" error when adding a project member in my TaskMatrix app. I'm using Firebase Firestore, and my code queries the users collection by email to get another user's UID.
 
 6) show me how to create and read tasks for a specific project from Firestore
+
+7) My figma has five Kanban statuses, help me map my Firestore task status into those columns   
+
+8) I need to add a status selector to my TaskForm for the five Kanban columns

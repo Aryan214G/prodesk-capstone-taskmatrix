@@ -1,33 +1,51 @@
 "use client";
 
+const columns = [
+  { id: "backlog", title: "Backlog" },
+  { id: "todo", title: "Todo" },
+  { id: "progress", title: "In Progress" },
+  { id: "review", title: "Review" },
+  { id: "done", title: "Done" },
+];
+
 export default function TaskList({ tasks, onEdit, onDelete }) {
-  if (tasks.length === 0) {
-    return <p>No tasks yet.</p>;
-  }
-
   return (
-    <div>
-      {tasks.map((task) => (
-        <div key={task.id}>
-          <h3>{task.title}</h3>
+    <div className="kanban-board">
+      {columns.map((column) => {
+        const columnTasks = tasks.filter(
+          (task) => task.status === column.id
+        );
 
-          {task.description && <p>{task.description}</p>}
+        return (
+          <section key={column.id} className="kanban-column">
+            <h2>{column.title}</h2>
 
-          <p>
-            {task.status} · {task.priority}
-          </p>
+            <div className="kanban-tasks">
+              {columnTasks.map((task) => (
+                <article key={task.id} className="task-card">
+                  <h3>{task.title}</h3>
 
-          {task.dueDate && <p>Due: {task.dueDate}</p>}
+                  {task.description && <p>{task.description}</p>}
 
-          <button onClick={() => onEdit(task)}>
-            Edit
-          </button>
+                  <span>{task.priority}</span>
 
-          <button onClick={() => onDelete(task.id)}>
-            Delete
-          </button>
-        </div>
-      ))}
+                  {task.dueDate && <p>Due: {task.dueDate}</p>}
+
+                  <div>
+                    <button onClick={() => onEdit(task)}>
+                      Edit
+                    </button>
+
+                    <button onClick={() => onDelete(task.id)}>
+                      Delete
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        );
+      })}
     </div>
   );
 }
