@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import { getUserProjects } from "@/lib/projects";
 import ProjectForm from "@/components/ProjectForm";
 import MemberForm from "@/components/MemberForm";
+import Link from "next/link";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -53,9 +54,12 @@ export default function DashboardPage() {
         {projects.map((project) => (
           <div key={project.id}>
             <h3>{project.name}</h3>
+
             <p>{project.description}</p>
 
-            <MemberForm projectId={project.id} />
+            <Link href={`/projects/${project.id}`}>
+              Open project
+            </Link>
           </div>
         ))}
       </main>
