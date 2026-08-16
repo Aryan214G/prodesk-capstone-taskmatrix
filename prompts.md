@@ -35,3 +35,5 @@
 10) How should I safely delete a task and remove it from the react state after Firestore confirms?
 
 11) Help me add drag and drop to my TaskMatrix Kanban board.
+
+12) subtasks does not show up in firestore. What could be the reason?
