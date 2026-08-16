@@ -110,10 +110,24 @@ export default function ProjectPage() {
                             console.error("Failed to delete task:", error);
                         }
                     }}
+
                     onStatusChange={async (taskId, newStatus) => {
+                        const task = tasks.find((item) => item.id === taskId);
+
+                        if (!task) return;
+
                         try {
                             await updateTask(taskId, {
                                 status: newStatus,
+                            });
+
+                            await createActivity({
+                                userId: user.uid,
+                                userName: user.name || user.email,
+                                projectId,
+                                type: "task_status_changed",
+                                message: `moved "${task.title}" to ${newStatus}`,
+                                taskId,
                             });
 
                             setTasks((current) =>

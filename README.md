@@ -42,7 +42,8 @@ The project emphasizes a modern user experience, scalable client-side state mana
 - Custom Kanban status columns
 - subtasks
 - Task CRUD, assignment, priority labels, and due dates
-- Deadline cron jobs
+
+Descope note: Deadline automation/cron jobs have been deferred to a later iteration to prioritize the core project, task, Kanban, and collaboration workflows.
 
 ### P1 — Planned
 
