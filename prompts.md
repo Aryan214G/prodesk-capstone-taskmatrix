@@ -19,3 +19,7 @@
 2) show me how to save a Firebase users profile with a role after registration
 
 3) Help me create and read user owned projects from Firestore in my TaskMatrix dashboard.
+
+4) Help me add simple member assignment to TaskMatrix projects using firebase user Ids.
+
+5) I am getting a "Missing or insufficient permissions" error when adding a project member in my TaskMatrix app. I'm using Firebase Firestore, and my code queries the users collection by email to get another user's UID.

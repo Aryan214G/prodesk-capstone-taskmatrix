@@ -8,6 +8,7 @@ import { auth } from "@/lib/firebase";
 import { useSelector } from "react-redux";
 import { getUserProjects } from "@/lib/projects";
 import ProjectForm from "@/components/ProjectForm";
+import MemberForm from "@/components/MemberForm";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -53,6 +54,8 @@ export default function DashboardPage() {
           <div key={project.id}>
             <h3>{project.name}</h3>
             <p>{project.description}</p>
+
+            <MemberForm projectId={project.id} />
           </div>
         ))}
       </main>
