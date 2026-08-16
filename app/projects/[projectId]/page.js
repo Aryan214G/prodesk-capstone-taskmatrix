@@ -15,7 +15,7 @@ import { useSelector } from "react-redux";
 
 export default function ProjectPage() {
     const { projectId } = useParams();
-    const user = useSelector((state) => state.auth.user);   
+    const user = useSelector((state) => state.auth.user);
 
     const [project, setProject] = useState(null);
     const [tasks, setTasks] = useState([]);
@@ -87,8 +87,21 @@ export default function ProjectPage() {
 
                         if (!confirmed) return;
 
+                        const task = tasks.find((item) => item.id === taskId);
+
+                        if (!task) return;
+
                         try {
                             await deleteTask(taskId);
+
+                            await createActivity({
+                                userId: user.uid,
+                                userName: user.name || user.email,
+                                projectId,
+                                type: "task_deleted",
+                                message: `deleted task "${task.title}"`,
+                                taskId,
+                            });
 
                             setTasks((current) =>
                                 current.filter((task) => task.id !== taskId)
