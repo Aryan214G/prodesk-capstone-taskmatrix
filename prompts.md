@@ -15,3 +15,7 @@
 ## Sprint 15
 
 1) Help me plan a firestore schema for TaskMatrix based on my project, task, member, activity and Kanban requirements mentioned in the README.
+
+2) show me how to save a Firebase users profile with a role after registration
+
+3) Help me create and read user owned projects from Firestore in my TaskMatrix dashboard.
