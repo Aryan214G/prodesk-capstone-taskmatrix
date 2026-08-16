@@ -9,10 +9,13 @@ import TaskList from "@/components/TaskList";
 import { db } from "@/lib/firebase";
 import { getProjectTasks, updateTask, deleteTask } from "@/lib/tasks";
 import TaskModal from "@/components/TaskModal";
+import { createActivity } from "@/lib/activities";
+import { useSelector } from "react-redux";
 
 
 export default function ProjectPage() {
     const { projectId } = useParams();
+    const user = useSelector((state) => state.auth.user);   
 
     const [project, setProject] = useState(null);
     const [tasks, setTasks] = useState([]);
@@ -118,6 +121,15 @@ export default function ProjectPage() {
                     onSave={async (updates) => {
                         try {
                             await updateTask(selectedTask.id, updates);
+
+                            await createActivity({
+                                userId: user.uid,
+                                userName: user.name || user.email,
+                                projectId,
+                                type: "task_updated",
+                                message: `updated task "${selectedTask.title}"`,
+                                taskId: selectedTask.id,
+                            });
 
                             setTasks((current) =>
                                 current.map((task) =>
