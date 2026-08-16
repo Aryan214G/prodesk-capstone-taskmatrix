@@ -75,10 +75,7 @@ export default function ProjectPage() {
 
                 <TaskList
                     tasks={tasks}
-                    onEdit={(task) => {
-                        console.log("EDIT CLICKED", task);
-                        setSelectedTask(task);
-                    }}
+                    onEdit={(task) => setSelectedTask(task)}
                     onDelete={async (taskId) => {
                         const confirmed = window.confirm(
                             "Are you sure you want to delete this task?"
@@ -94,6 +91,23 @@ export default function ProjectPage() {
                             );
                         } catch (error) {
                             console.error("Failed to delete task:", error);
+                        }
+                    }}
+                    onStatusChange={async (taskId, newStatus) => {
+                        try {
+                            await updateTask(taskId, {
+                                status: newStatus,
+                            });
+
+                            setTasks((current) =>
+                                current.map((task) =>
+                                    task.id === taskId
+                                        ? { ...task, status: newStatus }
+                                        : task
+                                )
+                            );
+                        } catch (error) {
+                            console.error("Failed to update task status:", error);
                         }
                     }}
                 />

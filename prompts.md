@@ -33,3 +33,5 @@
 9) Help me make add task edit functionality that updates the existing firestore document
 
 10) How should I safely delete a task and remove it from the react state after Firestore confirms?
+
+11) Help me add drag and drop to my TaskMatrix Kanban board.
