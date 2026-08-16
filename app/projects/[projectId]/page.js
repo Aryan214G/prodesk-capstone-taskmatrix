@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import AuthGuard from "@/components/AuthGuard";
 import TaskForm from "@/components/TaskForm";
 import TaskList from "@/components/TaskList";
@@ -14,6 +14,16 @@ import { useSelector } from "react-redux";
 import {
     getProjectMembers,
 } from "@/lib/projects";
+import ColumnManager from "@/components/ColumnManager";
+
+const defaultColumns = [
+    { id: "backlog", name: "Backlog", order: 0 },
+    { id: "todo", name: "Todo", order: 1 },
+    { id: "progress", name: "In Progress", order: 2 },
+    { id: "review", name: "Review", order: 3 },
+    { id: "done", name: "Done", order: 4 },
+];
+
 
 
 export default function ProjectPage() {
@@ -25,6 +35,10 @@ export default function ProjectPage() {
     const [loading, setLoading] = useState(true);
     const [selectedTask, setSelectedTask] = useState(null);
     const [members, setMembers] = useState([]);
+    const [columns, setColumns] = useState(defaultColumns);
+    const [showColumnManager, setShowColumnManager] = useState(false);
+
+
 
     useEffect(() => {
         if (!projectId) return;
@@ -46,6 +60,7 @@ export default function ProjectPage() {
                 };
 
                 setProject(projectData);
+                setColumns(projectData.columns || defaultColumns);
 
                 const projectMembers = await getProjectMembers(
                     projectData.memberIds || []
@@ -64,6 +79,15 @@ export default function ProjectPage() {
 
         loadProject();
     }, [projectId]);
+
+    async function handleColumnsSave(updatedColumns) {
+        await updateDoc(doc(db, "projects", projectId), {
+            columns: updatedColumns,
+        });
+
+        setColumns(updatedColumns);
+        setShowColumnManager(false);
+    }
 
     if (loading) {
         return <p className="page-message">Loading project...</p>;
@@ -96,69 +120,90 @@ export default function ProjectPage() {
                         <h2>Tasks</h2>
                     </div>
 
+                    <button
+                        type="button"
+                        onClick={() => setShowColumnManager(true)}
+                    >
+                        Manage Columns
+                    </button>
+
+                    {showColumnManager && (
+                        <ColumnManager
+                            columns={columns}
+                            onSave={handleColumnsSave}
+                            onClose={() => setShowColumnManager(false)}
+                        />
+                    )}
+
+
                     <TaskList
                         tasks={tasks}
+                        columns={columns}
                         onEdit={(task) => setSelectedTask(task)}
                         onDelete={async (taskId) => {
-                        const confirmed = window.confirm(
-                            "Are you sure you want to delete this task?"
-                        );
-
-                        if (!confirmed) return;
-
-                        const task = tasks.find((item) => item.id === taskId);
-
-                        if (!task) return;
-
-                        try {
-                            await deleteTask(taskId);
-
-                            await createActivity({
-                                userId: user.uid,
-                                userName: user.name || user.email,
-                                projectId,
-                                type: "task_deleted",
-                                message: `deleted task "${task.title}"`,
-                                taskId,
-                            });
-
-                            setTasks((current) =>
-                                current.filter((task) => task.id !== taskId)
+                            const confirmed = window.confirm(
+                                "Are you sure you want to delete this task?"
                             );
-                        } catch (error) {
-                            console.error("Failed to delete task:", error);
-                        }
+
+                            if (!confirmed) return;
+
+                            const task = tasks.find((item) => item.id === taskId);
+
+                            if (!task) return;
+
+                            try {
+                                await deleteTask(taskId);
+
+                                await createActivity({
+                                    userId: user.uid,
+                                    userName: user.name || user.email,
+                                    projectId,
+                                    type: "task_deleted",
+                                    message: `deleted task "${task.title}"`,
+                                    taskId,
+                                });
+
+                                setTasks((current) =>
+                                    current.filter((task) => task.id !== taskId)
+                                );
+                            } catch (error) {
+                                console.error("Failed to delete task:", error);
+                            }
                         }}
 
                         onStatusChange={async (taskId, newStatus) => {
-                        const task = tasks.find((item) => item.id === taskId);
+                            const task = tasks.find((item) => item.id === taskId);
 
-                        if (!task) return;
+                            if (!task) return;
 
-                        try {
-                            await updateTask(taskId, {
-                                status: newStatus,
-                            });
+                            try {
+                                await updateTask(taskId, {
+                                    status: newStatus,
+                                });
 
-                            await createActivity({
-                                userId: user.uid,
-                                userName: user.name || user.email,
-                                projectId,
-                                type: "task_status_changed",
-                                message: `moved "${task.title}" to ${newStatus}`,
-                                taskId,
-                            });
+                                const newColumn = columns.find(
+                                    (column) => column.id === newStatus
+                                );
 
-                            setTasks((current) =>
-                                current.map((task) =>
-                                    task.id === taskId
-                                        ? { ...task, status: newStatus }
-                                        : task
-                                )
-                            );
-                        } catch (error) {
-                            console.error("Failed to update task status:", error);
-                        }
+                                await createActivity({
+                                    userId: user.uid,
+                                    userName: user.name || user.email,
+                                    projectId,
+                                    type: "task_status_changed",
+                                    message: `moved "${task.title}" to ${newColumn?.name || newStatus}`,
+                                    taskId,
+                                });
+
+                                setTasks((current) =>
+                                    current.map((task) =>
+                                        task.id === taskId
+                                            ? { ...task, status: newStatus }
+                                            : task
+                                    )
+                                );
+                            } catch (error) {
+                                console.error("Failed to update task status:", error);
+                            }
                         }}
                     />
                 </section>

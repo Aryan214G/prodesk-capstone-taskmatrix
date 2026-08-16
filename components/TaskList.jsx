@@ -8,13 +8,7 @@ import {
   useDroppable,
 } from "@dnd-kit/core";
 
-const columns = [
-  { id: "backlog", title: "Backlog" },
-  { id: "todo", title: "Todo" },
-  { id: "progress", title: "In Progress" },
-  { id: "review", title: "Review" },
-  { id: "done", title: "Done" },
-];
+
 
 function TaskCard({ task, onEdit, onDelete, dragging = false }) {
   const { attributes, listeners, setNodeRef, transform } =
@@ -24,8 +18,8 @@ function TaskCard({ task, onEdit, onDelete, dragging = false }) {
 
   const style = transform
     ? {
-        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-      }
+      transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+    }
     : undefined;
 
   return (
@@ -82,9 +76,9 @@ function KanbanColumn({ column, tasks, onEdit, onDelete }) {
         minHeight: "300px",
         opacity: isOver ? 0.7 : 1,
       }}
-    >
+    >````
       <div className="column-header">
-        <h2>{column.title}</h2>
+        <h2>{column.name}</h2>
         <span>{tasks.length}</span>
       </div>
 
@@ -104,6 +98,7 @@ function KanbanColumn({ column, tasks, onEdit, onDelete }) {
 
 export default function TaskList({
   tasks,
+  columns,
   onEdit,
   onDelete,
   onStatusChange,
@@ -132,17 +127,19 @@ export default function TaskList({
       }}
     >
       <div className="kanban-board">
-        {columns.map((column) => (
-          <KanbanColumn
-            key={column.id}
-            column={column}
-            tasks={tasks.filter(
-              (task) => task.status === column.id
-            )}
-            onEdit={onEdit}
-            onDelete={onDelete}
-          />
-        ))}
+        {[...columns]
+          .sort((a, b) => a.order - b.order)
+          .map((column) => (
+            <KanbanColumn
+              key={column.id}
+              column={column}
+              tasks={tasks.filter(
+                (task) => task.status === column.id
+              )}
+              onEdit={onEdit}
+              onDelete={onDelete}
+            />
+          ))}
       </div>
 
       <DragOverlay />

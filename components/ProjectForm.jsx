@@ -21,10 +21,19 @@ export default function ProjectForm({ onCreated }) {
     setLoading(true);
 
     try {
+      const columns = [
+        { id: "backlog", name: "Backlog", order: 0 },
+        { id: "todo", name: "Todo", order: 1 },
+        { id: "progress", name: "In Progress", order: 2 },
+        { id: "review", name: "Review", order: 3 },
+        { id: "done", name: "Done", order: 4 },
+      ];
+
       const project = await createProject(
         user.uid,
         name.trim(),
-        description.trim()
+        description.trim(),
+        columns
       );
 
       setName("");
