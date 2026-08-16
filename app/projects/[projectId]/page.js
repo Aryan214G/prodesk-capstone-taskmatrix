@@ -11,6 +11,9 @@ import { getProjectTasks, updateTask, deleteTask } from "@/lib/tasks";
 import TaskModal from "@/components/TaskModal";
 import { createActivity } from "@/lib/activities";
 import { useSelector } from "react-redux";
+import {
+    getProjectMembers,
+} from "@/lib/projects";
 
 
 export default function ProjectPage() {
@@ -21,6 +24,7 @@ export default function ProjectPage() {
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedTask, setSelectedTask] = useState(null);
+    const [members, setMembers] = useState([]);
 
     useEffect(() => {
         if (!projectId) return;
@@ -36,10 +40,18 @@ export default function ProjectPage() {
                     return;
                 }
 
-                setProject({
+                const projectData = {
                     id: projectSnapshot.id,
                     ...projectSnapshot.data(),
-                });
+                };
+
+                setProject(projectData);
+
+                const projectMembers = await getProjectMembers(
+                    projectData.memberIds || []
+                );
+
+                setMembers(projectMembers);
 
                 const projectTasks = await getProjectTasks(projectId);
                 setTasks(projectTasks);
@@ -70,6 +82,7 @@ export default function ProjectPage() {
 
                 <TaskForm
                     projectId={projectId}
+                    members={members}
                     onCreated={(task) => {
                         setTasks((current) => [task, ...current]);
                     }}

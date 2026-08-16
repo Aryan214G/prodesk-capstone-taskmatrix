@@ -5,7 +5,11 @@ import { useSelector } from "react-redux";
 import { createTask } from "@/lib/tasks";
 import { createActivity } from "@/lib/activities";
 
-export default function TaskForm({ projectId, onCreated }) {
+export default function TaskForm({
+    projectId,
+    members = [],
+    onCreated,
+}) {
     const user = useSelector((state) => state.auth.user);
 
     const [title, setTitle] = useState("");
@@ -14,6 +18,9 @@ export default function TaskForm({ projectId, onCreated }) {
     const [dueDate, setDueDate] = useState("");
     const [status, setStatus] = useState("backlog");
     const [loading, setLoading] = useState(false);
+    const [assigneeId, setAssigneeId] = useState("");
+    const [labels, setLabels] = useState([]);
+    const [labelInput, setLabelInput] = useState("");
 
     async function handleSubmit(event) {
         event.preventDefault();
@@ -33,8 +40,8 @@ export default function TaskForm({ projectId, onCreated }) {
                 status,
                 projectId,
                 ownerId: user.uid,
-                assigneeId: user.uid,
-                labels: [],
+                assigneeId: assigneeId || null,
+                labels,
                 subtasks: [],
             });
 
@@ -52,6 +59,9 @@ export default function TaskForm({ projectId, onCreated }) {
             setPriority("medium");
             setDueDate("");
             setStatus("backlog");
+            setAssigneeId("");
+            setLabels([]);
+            setLabelInput("");
 
             onCreated?.(task);
         } catch (error) {
@@ -99,11 +109,69 @@ export default function TaskForm({ projectId, onCreated }) {
                 <option value="done">Done</option>
             </select>
 
+            <select
+                value={assigneeId}
+                onChange={(event) => setAssigneeId(event.target.value)}
+            >
+                <option value="">Unassigned</option>
+
+                {members.map((member) => (
+                    <option key={member.uid} value={member.uid}>
+                        {member.name || member.email}
+                    </option>
+                ))}
+            </select>
+
             <input
                 type="date"
                 value={dueDate}
                 onChange={(event) => setDueDate(event.target.value)}
             />
+
+            <div>
+                <h3>Labels</h3>
+
+                <div>
+                    {labels.map((label) => (
+                        <span key={label}>
+                            {label}
+
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    setLabels((current) =>
+                                        current.filter((item) => item !== label)
+                                    )
+                                }
+                            >
+                                ×
+                            </button>
+                        </span>
+                    ))}
+                </div>
+
+                <input
+                    value={labelInput}
+                    onChange={(event) => setLabelInput(event.target.value)}
+                    placeholder="Add label"
+                />
+
+                <button
+                    type="button"
+                    onClick={() => {
+                        const label = labelInput.trim();
+
+                        if (!label || labels.includes(label)) {
+                            return;
+                        }
+
+                        setLabels((current) => [...current, label]);
+                        setLabelInput("");
+                    }}
+                >
+                    Add label
+                </button>
+            </div>
 
             <button type="submit" disabled={loading}>
                 {loading ? "Creating..." : "Create task"}

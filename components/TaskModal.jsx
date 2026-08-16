@@ -10,6 +10,8 @@ export default function TaskModal({ task, onClose, onSave }) {
     const [priority, setPriority] = useState("medium");
     const [dueDate, setDueDate] = useState("");
     const [subtasks, setSubtasks] = useState([]);
+    const [labels, setLabels] = useState([]);
+    const [labelInput, setLabelInput] = useState("");
 
     useEffect(() => {
         if (!task) return;
@@ -20,6 +22,7 @@ export default function TaskModal({ task, onClose, onSave }) {
         setPriority(task.priority || "medium");
         setDueDate(task.dueDate || "");
         setSubtasks(task.subtasks || []);
+        setLabels(task.labels || []);
     }, [task]);
 
     if (!task) return null;
@@ -34,6 +37,7 @@ export default function TaskModal({ task, onClose, onSave }) {
             priority,
             dueDate,
             subtasks,
+            labels,
         });
     }
 
@@ -86,6 +90,51 @@ export default function TaskModal({ task, onClose, onSave }) {
                         subtasks={subtasks}
                         onChange={setSubtasks}
                     />
+
+                    <div>
+                        <h3>Labels</h3>
+
+                        <div>
+                            {labels.map((label) => (
+                                <span key={label}>
+                                    {label}
+
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            setLabels((current) =>
+                                                current.filter((item) => item !== label)
+                                            )
+                                        }
+                                    >
+                                        ×
+                                    </button>
+                                </span>
+                            ))}
+                        </div>
+
+                        <input
+                            value={labelInput}
+                            onChange={(event) => setLabelInput(event.target.value)}
+                            placeholder="Add label"
+                        />
+
+                        <button
+                            type="button"
+                            onClick={() => {
+                                const label = labelInput.trim();
+
+                                if (!label || labels.includes(label)) {
+                                    return;
+                                }
+
+                                setLabels((current) => [...current, label]);
+                                setLabelInput("");
+                            }}
+                        >
+                            Add label
+                        </button>
+                    </div>
 
                     <button type="submit">
                         Save changes
