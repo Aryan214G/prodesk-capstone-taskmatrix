@@ -3,7 +3,12 @@
 import Link from "next/link";
 import { useState } from "react";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { auth, db } from "@/lib/firebase";
+import {
+    doc,
+    setDoc,
+    serverTimestamp,
+} from "firebase/firestore";
 
 export default function RegisterPage() {
     const [name, setName] = useState("");
@@ -27,6 +32,13 @@ export default function RegisterPage() {
 
             await updateProfile(userCredential.user, {
                 displayName: name,
+            });
+            
+            await setDoc(doc(db, "users", userCredential.user.uid), {
+                name,
+                email,
+                role: "member",
+                createdAt: serverTimestamp(),
             });
 
             console.log("Registered user:", userCredential.user);
