@@ -10,6 +10,7 @@ import { db } from "@/lib/firebase";
 import { getProjectTasks, updateTask, deleteTask } from "@/lib/tasks";
 import TaskModal from "@/components/TaskModal";
 
+
 export default function ProjectPage() {
     const { projectId } = useParams();
 

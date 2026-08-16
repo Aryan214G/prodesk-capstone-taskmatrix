@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { createTask } from "@/lib/tasks";
+import { createActivity } from "@/lib/activities";
 
 export default function TaskForm({ projectId, onCreated }) {
     const user = useSelector((state) => state.auth.user);
@@ -35,6 +36,14 @@ export default function TaskForm({ projectId, onCreated }) {
                 assigneeId: user.uid,
                 labels: [],
                 subtasks: [],
+            });
+
+            await createActivity({
+                userId: user.uid,
+                projectId,
+                type: "task_created",
+                message: `created task "${task.title}"`,
+                taskId: task.id,
             });
 
             setTitle("");

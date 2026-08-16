@@ -10,6 +10,7 @@ import { getUserProjects } from "@/lib/projects";
 import ProjectForm from "@/components/ProjectForm";
 import MemberForm from "@/components/MemberForm";
 import Link from "next/link";
+import { subscribeToProjectActivity } from "@/lib/activities";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -23,6 +24,7 @@ export default function DashboardPage() {
 
 
   const [projects, setProjects] = useState([]);
+  const [activities, setActivities] = useState([]);
 
   useEffect(() => {
     if (!user?.uid) return;
@@ -34,6 +36,37 @@ export default function DashboardPage() {
 
     loadProjects();
   }, [user]);
+
+  useEffect(() => {
+    if (!projects.length) {
+      setActivities([]);
+      return;
+    }
+
+    const unsubscribes = projects.map((project) =>
+      subscribeToProjectActivity(project.id, (projectActivities) => {
+        setActivities((current) => {
+          const otherActivities = current.filter(
+            (activity) => activity.projectId !== project.id
+          );
+
+          return [...otherActivities, ...projectActivities].sort(
+            (a, b) => {
+              const aTime = a.createdAt?.toMillis?.() || 0;
+              const bTime = b.createdAt?.toMillis?.() || 0;
+
+              return bTime - aTime;
+            }
+          );
+        });
+      })
+    );
+
+    return () => {
+      unsubscribes.forEach((unsubscribe) => unsubscribe());
+    };
+  }, [projects]);
+
 
   return (
     <AuthGuard>
@@ -62,6 +95,20 @@ export default function DashboardPage() {
             </Link>
           </div>
         ))}
+
+        <section>
+          <h2>Recent Activity</h2>
+
+          {activities.length === 0 ? (
+            <p>No recent activity.</p>
+          ) : (
+            activities.slice(0, 10).map((activity) => (
+              <div key={activity.id}>
+                <p>{activity.message}</p>
+              </div>
+            ))
+          )}
+        </section>
       </main>
     </AuthGuard>
   );
