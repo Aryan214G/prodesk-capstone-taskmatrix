@@ -3,139 +3,170 @@
 import { useState } from "react";
 
 export default function ColumnManager({
-  columns,
-  onSave,
-  onClose,
+    columns,
+    tasks,
+    onSave,
+    onClose,
 }) {
-  const [localColumns, setLocalColumns] = useState(
-    [...columns].sort((a, b) => a.order - b.order)
-  );
-
-  const [newColumnName, setNewColumnName] = useState("");
-
-  function addColumn() {
-    const name = newColumnName.trim();
-
-    if (!name) return;
-
-    const column = {
-      id: crypto.randomUUID(),
-      name,
-      order: localColumns.length,
-    };
-
-    setLocalColumns((current) => [...current, column]);
-    setNewColumnName("");
-  }
-
-  function renameColumn(id, name) {
-    setLocalColumns((current) =>
-      current.map((column) =>
-        column.id === id
-          ? { ...column, name }
-          : column
-      )
+    const [localColumns, setLocalColumns] = useState(
+        [...columns].sort((a, b) => a.order - b.order)
     );
-  }
 
-  function removeColumn(id) {
-    if (localColumns.length <= 1) return;
+    const [newColumnName, setNewColumnName] = useState("");
 
-    setLocalColumns((current) =>
-      current
-        .filter((column) => column.id !== id)
-        .map((column, index) => ({
-          ...column,
-          order: index,
-        }))
-    );
-  }
+    function addColumn() {
+        const name = newColumnName.trim();
 
-  function moveColumn(index, direction) {
-    const newIndex = index + direction;
+        if (!name) return;
 
-    if (newIndex < 0 || newIndex >= localColumns.length) {
-      return;
+        const column = {
+            id: crypto.randomUUID(),
+            name,
+            order: localColumns.length,
+        };
+
+        setLocalColumns((current) => [...current, column]);
+        setNewColumnName("");
     }
 
-    const updated = [...localColumns];
+    function renameColumn(id, name) {
+        setLocalColumns((current) =>
+            current.map((column) =>
+                column.id === id
+                    ? { ...column, name }
+                    : column
+            )
+        );
+    }
 
-    [updated[index], updated[newIndex]] = [
-      updated[newIndex],
-      updated[index],
-    ];
+    function removeColumn(id) {
+        if (localColumns.length <= 1) return;
 
-    setLocalColumns(
-      updated.map((column, index) => ({
-        ...column,
-        order: index,
-      }))
-    );
-  }
+        const hasTasks = tasks.some(
+            (task) => task.status === id
+        );
 
-  function handleSave() {
-    onSave(localColumns);
-  }
+        if (hasTasks) {
+            window.alert(
+                "Cannot delete this column because it contains tasks. Move the tasks to another column first."
+            );
+            return;
+        }
 
-  return (
-    <div>
-      <h2>Manage Columns</h2>
+        setLocalColumns((current) =>
+            current
+                .filter((column) => column.id !== id)
+                .map((column, index) => ({
+                    ...column,
+                    order: index,
+                }))
+        );
+    }
 
-      {localColumns.map((column, index) => (
-        <div key={column.id}>
-          <button
-            type="button"
-            onClick={() => moveColumn(index, -1)}
-            disabled={index === 0}
-          >
-            ↑
-          </button>
+    function moveColumn(index, direction) {
+        const newIndex = index + direction;
 
-          <button
-            type="button"
-            onClick={() => moveColumn(index, 1)}
-            disabled={index === localColumns.length - 1}
-          >
-            ↓
-          </button>
+        if (newIndex < 0 || newIndex >= localColumns.length) {
+            return;
+        }
 
-          <input
-            value={column.name}
-            onChange={(event) =>
-              renameColumn(column.id, event.target.value)
-            }
-          />
+        const updated = [...localColumns];
 
-          <button
-            type="button"
-            onClick={() => removeColumn(column.id)}
-          >
-            Delete
-          </button>
+        [updated[index], updated[newIndex]] = [
+            updated[newIndex],
+            updated[index],
+        ];
+
+        setLocalColumns(
+            updated.map((column, index) => ({
+                ...column,
+                order: index,
+            }))
+        );
+    }
+
+    function handleSave() {
+        onSave(localColumns);
+    }
+
+    return (
+        <div className="modal-backdrop" role="presentation">
+            <div
+                className="modal-dialog column-manager"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="column-manager-title"
+            >
+                <h2 id="column-manager-title">Manage Columns</h2>
+
+                <div className="column-list">
+                    {localColumns.map((column, index) => (
+                        <div className="column-row" key={column.id}>
+                            <div className="column-move-buttons">
+                                <button
+                                    className="button button-compact button-secondary"
+                                    type="button"
+                                    aria-label={`Move ${column.name} up`}
+                                    onClick={() => moveColumn(index, -1)}
+                                    disabled={index === 0}
+                                >
+                                    ↑
+                                </button>
+
+                                <button
+                                    className="button button-compact button-secondary"
+                                    type="button"
+                                    aria-label={`Move ${column.name} down`}
+                                    onClick={() => moveColumn(index, 1)}
+                                    disabled={index === localColumns.length - 1}
+                                >
+                                    ↓
+                                </button>
+                            </div>
+
+                            <input
+                                aria-label="Column name"
+                                value={column.name}
+                                onChange={(event) =>
+                                    renameColumn(column.id, event.target.value)
+                                }
+                            />
+
+                            <button
+                                className="button button-compact button-danger"
+                                type="button"
+                                onClick={() => removeColumn(column.id)}
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    ))}
+                </div>
+
+                <div className="column-add-form inline-form">
+                    <input
+                        value={newColumnName}
+                        onChange={(event) =>
+                            setNewColumnName(event.target.value)
+                        }
+                        placeholder="New column name"
+                    />
+
+                    <button className="button button-secondary" type="button" onClick={addColumn}>
+                        Add Column
+                    </button>
+                </div>
+
+                <div className="modal-actions">
+                    <button className="button" type="button" onClick={handleSave}>
+                        Save
+                    </button>
+
+                    <button className="button button-secondary" type="button" onClick={onClose}>
+                        Cancel
+                    </button>
+                </div>
+            </div>
         </div>
-      ))}
-
-      <div>
-        <input
-          value={newColumnName}
-          onChange={(event) =>
-            setNewColumnName(event.target.value)
-          }
-          placeholder="New column name"
-        />
-
-        <button type="button" onClick={addColumn}>
-          Add Column
-        </button>
-      </div>
-
-      <button type="button" onClick={handleSave}>
-        Save
-      </button>
-
-      <button type="button" onClick={onClose}>
-        Cancel
-      </button>
-    </div>
-  );
+    );
 }

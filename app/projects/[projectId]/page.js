@@ -121,6 +121,7 @@ export default function ProjectPage() {
                     </div>
 
                     <button
+                        className="button button-secondary manage-columns-button"
                         type="button"
                         onClick={() => setShowColumnManager(true)}
                     >
@@ -130,6 +131,7 @@ export default function ProjectPage() {
                     {showColumnManager && (
                         <ColumnManager
                             columns={columns}
+                            tasks={tasks}
                             onSave={handleColumnsSave}
                             onClose={() => setShowColumnManager(false)}
                         />

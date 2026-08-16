@@ -76,7 +76,7 @@ function KanbanColumn({ column, tasks, onEdit, onDelete }) {
         minHeight: "300px",
         opacity: isOver ? 0.7 : 1,
       }}
-    >````
+    >
       <div className="column-header">
         <h2>{column.name}</h2>
         <span>{tasks.length}</span>

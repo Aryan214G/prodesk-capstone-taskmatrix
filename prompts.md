@@ -41,3 +41,5 @@
 13) How should I handle adding and removing labels in a React form without allowing duplicate labels?
 
 14) How should I structure project members in firestore so I can assign tasks to them?
+
+15) I want to restructure my kanban board logic to let users create their own custom columns.
