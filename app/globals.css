@@ -149,6 +149,8 @@ input[type="date"] { color-scheme: dark; }
 .auth-form { display: grid; gap: 0.75rem; }
 .auth-card > p:last-child { margin: 1rem 0 0; color: var(--muted); font-size: 0.9rem; }
 .home-card { text-align: center; }
+.home-card > p { margin-bottom: 1rem; color: var(--muted); }
+.landing-login { display: inline-flex; align-items: center; justify-content: center; margin-top: 0.5rem; }
 .form-message { margin: 0.75rem 0 0; color: #167044; font-size: 0.9rem; }
 .form-error { color: #b42334; }
 .page-message { display: grid; min-height: 100vh; place-items: center; margin: 0; color: var(--muted); }

@@ -15,6 +15,7 @@ import {
     getProjectMembers,
 } from "@/lib/projects";
 import ColumnManager from "@/components/ColumnManager";
+import MemberForm from "@/components/MemberForm";
 
 const defaultColumns = [
     { id: "backlog", name: "Backlog", order: 0 },
@@ -41,10 +42,11 @@ export default function ProjectPage() {
 
 
     useEffect(() => {
-        if (!projectId) return;
+        if (!projectId || !user?.uid) return;
 
         async function loadProject() {
             try {
+
                 const projectSnapshot = await getDoc(
                     doc(db, "projects", projectId)
                 );
@@ -58,6 +60,15 @@ export default function ProjectPage() {
                     id: projectSnapshot.id,
                     ...projectSnapshot.data(),
                 };
+
+                const isMember =
+                    user?.uid === projectData.ownerId ||
+                    (projectData.memberIds || []).includes(user?.uid);
+
+                if (!isMember) {
+                    setProject(null);
+                    return;
+                }
 
                 setProject(projectData);
                 setColumns(projectData.columns || defaultColumns);
@@ -78,7 +89,7 @@ export default function ProjectPage() {
         }
 
         loadProject();
-    }, [projectId]);
+    }, [projectId, user]);
 
     async function handleColumnsSave(updatedColumns) {
         await updateDoc(doc(db, "projects", projectId), {
@@ -106,6 +117,9 @@ export default function ProjectPage() {
                         {project.description && <p>{project.description}</p>}
                     </div>
                 </header>
+
+                <MemberForm projectId={projectId} />
+
 
                 <TaskForm
                     projectId={projectId}

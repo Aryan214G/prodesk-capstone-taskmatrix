@@ -43,3 +43,5 @@
 14) How should I structure project members in firestore so I can assign tasks to them?
 
 15) I want to restructure my kanban board logic to let users create their own custom columns.
+
+16) I copied the url of the project of user B, and logged in as user A and pasted it, and it loaded user B's project.
