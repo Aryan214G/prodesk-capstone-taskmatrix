@@ -30,10 +30,12 @@ export default function RegisterPage() {
                 password
             );
 
-            await updateProfile(userCredential.user, {
+            const user = userCredential.user;
+
+            await updateProfile(user, {
                 displayName: name,
             });
-            
+
             await setDoc(doc(db, "users", userCredential.user.uid), {
                 name,
                 email,

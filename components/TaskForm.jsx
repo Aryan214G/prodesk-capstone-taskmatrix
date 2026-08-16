@@ -40,6 +40,7 @@ export default function TaskForm({ projectId, onCreated }) {
 
             await createActivity({
                 userId: user.uid,
+                userName: user.name || user.email,
                 projectId,
                 type: "task_created",
                 message: `created task "${task.title}"`,

@@ -104,7 +104,8 @@ export default function DashboardPage() {
           ) : (
             activities.slice(0, 10).map((activity) => (
               <div key={activity.id}>
-                <p>{activity.message}</p>
+                <strong>{activity.userName}</strong>{" "}
+                {activity.message}
               </div>
             ))
           )}
