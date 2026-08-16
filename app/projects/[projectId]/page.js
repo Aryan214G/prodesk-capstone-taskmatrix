@@ -7,76 +7,118 @@ import AuthGuard from "@/components/AuthGuard";
 import TaskForm from "@/components/TaskForm";
 import TaskList from "@/components/TaskList";
 import { db } from "@/lib/firebase";
-import { getProjectTasks } from "@/lib/tasks";
+import { getProjectTasks, updateTask, deleteTask } from "@/lib/tasks";
+import TaskModal from "@/components/TaskModal";
 
 export default function ProjectPage() {
-  const { projectId } = useParams();
+    const { projectId } = useParams();
 
-  const [project, setProject] = useState(null);
-  const [tasks, setTasks] = useState([]);
-  const [loading, setLoading] = useState(true);
+    const [project, setProject] = useState(null);
+    const [tasks, setTasks] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [selectedTask, setSelectedTask] = useState(null);
 
-  useEffect(() => {
-    if (!projectId) return;
+    useEffect(() => {
+        if (!projectId) return;
 
-    async function loadProject() {
-      try {
-        const projectSnapshot = await getDoc(
-          doc(db, "projects", projectId)
-        );
+        async function loadProject() {
+            try {
+                const projectSnapshot = await getDoc(
+                    doc(db, "projects", projectId)
+                );
 
-        if (!projectSnapshot.exists()) {
-          setProject(null);
-          return;
+                if (!projectSnapshot.exists()) {
+                    setProject(null);
+                    return;
+                }
+
+                setProject({
+                    id: projectSnapshot.id,
+                    ...projectSnapshot.data(),
+                });
+
+                const projectTasks = await getProjectTasks(projectId);
+                setTasks(projectTasks);
+            } catch (error) {
+                console.error("Failed to load project:", error);
+            } finally {
+                setLoading(false);
+            }
         }
 
-        setProject({
-          id: projectSnapshot.id,
-          ...projectSnapshot.data(),
-        });
+        loadProject();
+    }, [projectId]);
 
-        const projectTasks = await getProjectTasks(projectId);
-        setTasks(projectTasks);
-      } catch (error) {
-        console.error("Failed to load project:", error);
-      } finally {
-        setLoading(false);
-      }
+    if (loading) {
+        return <p>Loading project...</p>;
     }
 
-    loadProject();
-  }, [projectId]);
+    if (!project) {
+        return <p>Project not found.</p>;
+    }
 
-  if (loading) {
-    return <p>Loading project...</p>;
-  }
+    return (
+        <AuthGuard>
+            <main>
+                <h1>{project.name}</h1>
 
-  if (!project) {
-    return <p>Project not found.</p>;
-  }
+                {project.description && <p>{project.description}</p>}
 
-  return (
-    <AuthGuard>
-      <main>
-        <h1>{project.name}</h1>
+                <TaskForm
+                    projectId={projectId}
+                    onCreated={(task) => {
+                        setTasks((current) => [task, ...current]);
+                    }}
+                />
 
-        {project.description && <p>{project.description}</p>}
+                <h2>Tasks</h2>
 
-        <TaskForm
-          projectId={projectId}
-          onCreated={(task) => {
-            setTasks((current) => [task, ...current]);
-          }}
-        />
+                <TaskList
+                    tasks={tasks}
+                    onEdit={(task) => {
+                        console.log("EDIT CLICKED", task);
+                        setSelectedTask(task);
+                    }}
+                    onDelete={async (taskId) => {
+                        const confirmed = window.confirm(
+                            "Are you sure you want to delete this task?"
+                        );
 
-        <h2>Tasks</h2>
+                        if (!confirmed) return;
 
-        <TaskList
-          tasks={tasks}
-          onEdit={() => {}}
-          onDelete={() => {}}
-        />
-      </main>
-    </AuthGuard>
-  );
+                        try {
+                            await deleteTask(taskId);
+
+                            setTasks((current) =>
+                                current.filter((task) => task.id !== taskId)
+                            );
+                        } catch (error) {
+                            console.error("Failed to delete task:", error);
+                        }
+                    }}
+                />
+                <TaskModal
+                    task={selectedTask}
+                    onClose={() => setSelectedTask(null)}
+                    onSave={async (updates) => {
+                        try {
+                            await updateTask(selectedTask.id, updates);
+
+                            setTasks((current) =>
+                                current.map((task) =>
+                                    task.id === selectedTask.id
+                                        ? { ...task, ...updates }
+                                        : task
+                                )
+                            );
+
+                            setSelectedTask(null);
+                        } catch (error) {
+                            console.error("Failed to update task:", error);
+                        }
+                    }}
+                />
+            </main>
+        </AuthGuard>
+    );
 }

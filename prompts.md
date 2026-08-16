@@ -29,3 +29,7 @@
 7) My figma has five Kanban statuses, help me map my Firestore task status into those columns   
 
 8) I need to add a status selector to my TaskForm for the five Kanban columns
+
+9) Help me make add task edit functionality that updates the existing firestore document
+
+10) How should I safely delete a task and remove it from the react state after Firestore confirms?
