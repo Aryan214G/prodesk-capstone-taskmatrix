@@ -45,3 +45,12 @@
 15) I want to restructure my kanban board logic to let users create their own custom columns.
 
 16) I copied the url of the project of user B, and logged in as user A and pasted it, and it loaded user B's project.
+
+## Sprint 16
+
+1) Help me setup an API endpoint in my next.js application using gemini api.
+
+2) Explain this command:
+curl -X POST http://localhost:3000/api/ai/subtasks \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Implement Firebase authentication","description":"Add login and registration using Firebase."}'
