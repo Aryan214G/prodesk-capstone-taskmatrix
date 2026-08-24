@@ -217,6 +217,12 @@ input[type="date"] {
   min-height: 76px;
 }
 
+.project-form .button {
+  align-self: end;
+  justify-self: end;
+  width: auto;
+}
+
 .section-heading {
   display: flex;
   align-items: center;
