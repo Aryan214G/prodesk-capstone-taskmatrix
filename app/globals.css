@@ -591,6 +591,13 @@ input[type="date"] {
   gap: 0.5rem;
 }
 
+.tasks-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
 .manage-columns-button {
   margin-bottom: 1rem;
 }

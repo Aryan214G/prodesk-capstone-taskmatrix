@@ -179,38 +179,40 @@ export default function ProjectPage() {
                 <MemberForm projectId={projectId} />
 
 
-                <button
-                    className="button"
-                    type="button"
-                    onClick={() => setShowTaskForm(true)}
-                >
-                    <Plus size={16} /> Create task
-                </button>
-
-                <CreateTaskModal
-                    open={showTaskForm}
-                    projectId={projectId}
-                    members={members}
-                    onClose={() => setShowTaskForm(false)}
-                    onCreated={(task) => {
-                        setTasks((current) => [task, ...current]);
-                        setShowTaskForm(false);
-                    }}
-                />
-
                 <section className="tasks-section">
                     <div className="section-heading">
                         <h2>Tasks</h2>
                     </div>
 
-                    <button
-                        className="button button-secondary manage-columns-button"
-                        type="button"
-                        onClick={() => setShowColumnManager(true)}
-                        disabled={savingColumns}
-                    >
-                        <Settings size={16} /> Manage Columns
-                    </button>
+                    <div className="tasks-actions">
+                        <button
+                            className="button"
+                            type="button"
+                            onClick={() => setShowTaskForm(true)}
+                        >
+                            <Plus size={16} /> Create task
+                        </button>
+
+                        <button
+                            className="button button-secondary"
+                            type="button"
+                            onClick={() => setShowColumnManager(true)}
+                            disabled={savingColumns}
+                        >
+                            <Settings size={16} /> Manage Columns
+                        </button>
+                    </div>
+
+                    <CreateTaskModal
+                        open={showTaskForm}
+                        projectId={projectId}
+                        members={members}
+                        onClose={() => setShowTaskForm(false)}
+                        onCreated={(task) => {
+                            setTasks((current) => [task, ...current]);
+                            setShowTaskForm(false);
+                        }}
+                    />
 
                     {showColumnManager && (
                         <ColumnManager
