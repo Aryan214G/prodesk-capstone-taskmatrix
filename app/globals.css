@@ -132,6 +132,9 @@ input[type="checkbox"] {
 
 input[type="date"] {
   color-scheme: dark;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .button {
@@ -324,6 +327,11 @@ input[type="date"] {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
+  min-width: 0;
+}
+
+.task-form > * {
+  min-width: 0;
 }
 
 .task-form h2,
