@@ -25,47 +25,112 @@ export default function DashboardPage() {
   const [projects, setProjects] = useState([]);
   const [activities, setActivities] = useState([]);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [projectsLoading, setProjectsLoading] = useState(true);
+  const [activitiesLoading, setActivitiesLoading] = useState(true);
+  const [projectsError, setProjectsError] = useState(false);
+  const [activitiesError, setActivitiesError] = useState(false);
 
   useEffect(() => {
     if (!user?.uid) return;
 
+    let isActive = true;
+
     async function loadProjects() {
-      const data = await getUserProjects(user.uid);
-      setProjects(data);
+      setProjectsLoading(true);
+      setActivitiesLoading(true);
+      setProjectsError(false);
+      setActivitiesError(false);
+
+      try {
+        const data = await getUserProjects(user.uid);
+
+        if (isActive) {
+          setProjects(data);
+        }
+      } catch (error) {
+        console.error("Failed to load projects:", error);
+
+        if (isActive) {
+          setProjects([]);
+          setProjectsError(true);
+        }
+      } finally {
+        if (isActive) {
+          setProjectsLoading(false);
+        }
+      }
     }
 
     loadProjects();
+
+    return () => {
+      isActive = false;
+    };
   }, [user]);
 
   useEffect(() => {
+    if (projectsLoading) return;
+
     if (!projects.length) {
       setActivities([]);
+      setActivitiesLoading(false);
+      setActivitiesError(projectsError);
       return;
     }
 
+    let isActive = true;
+    const pendingProjectIds = new Set(projects.map((project) => project.id));
+
+    setActivitiesLoading(true);
+    setActivitiesError(false);
+
+    function markProjectActivityLoaded(projectId) {
+      pendingProjectIds.delete(projectId);
+
+      if (pendingProjectIds.size === 0 && isActive) {
+        setActivitiesLoading(false);
+      }
+    }
+
     const unsubscribes = projects.map((project) =>
-      subscribeToProjectActivity(project.id, (projectActivities) => {
-        setActivities((current) => {
-          const otherActivities = current.filter(
-            (activity) => activity.projectId !== project.id
-          );
+      subscribeToProjectActivity(
+        project.id,
+        (projectActivities) => {
+          if (!isActive) return;
 
-          return [...otherActivities, ...projectActivities].sort(
-            (a, b) => {
-              const aTime = a.createdAt?.toMillis?.() || 0;
-              const bTime = b.createdAt?.toMillis?.() || 0;
+          setActivities((current) => {
+            const otherActivities = current.filter(
+              (activity) => activity.projectId !== project.id
+            );
 
-              return bTime - aTime;
-            }
-          );
-        });
-      })
+            return [...otherActivities, ...projectActivities].sort(
+              (a, b) => {
+                const aTime = a.createdAt?.toMillis?.() || 0;
+                const bTime = b.createdAt?.toMillis?.() || 0;
+
+                return bTime - aTime;
+              }
+            );
+          });
+
+          markProjectActivityLoaded(project.id);
+        },
+        (error) => {
+          console.error("Failed to load recent activity:", error);
+
+          if (isActive) {
+            setActivitiesError(true);
+            markProjectActivityLoaded(project.id);
+          }
+        }
+      )
     );
 
     return () => {
+      isActive = false;
       unsubscribes.forEach((unsubscribe) => unsubscribe());
     };
-  }, [projects]);
+  }, [projects, projectsError, projectsLoading]);
 
 
   return (
@@ -100,6 +165,7 @@ export default function DashboardPage() {
 
         <div className="dashboard-grid">
           <ProjectForm
+            disabled={projectsLoading}
             onCreated={(project) => {
               setProjects((current) => [project, ...current]);
             }}
@@ -110,7 +176,16 @@ export default function DashboardPage() {
               <h2>Recent Activity</h2>
             </div>
 
-            {activities.length === 0 ? (
+            {activitiesLoading ? (
+              <div className="loading-state loading-panel" role="status">
+                <span className="loading-spinner" aria-hidden="true" />
+                <p>Loading recent activity...</p>
+              </div>
+            ) : activitiesError ? (
+              <p className="empty-state" role="alert">
+                Unable to load recent activity.
+              </p>
+            ) : activities.length === 0 ? (
               <p className="empty-state">No recent activity.</p>
             ) : (
               <div className="activity-list">
@@ -131,7 +206,16 @@ export default function DashboardPage() {
             <h2>Projects</h2>
           </div>
 
-          {projects.length === 0 ? (
+          {projectsLoading ? (
+            <div className="panel loading-state loading-panel" role="status">
+              <span className="loading-spinner" aria-hidden="true" />
+              <p>Loading projects...</p>
+            </div>
+          ) : projectsError ? (
+            <p className="empty-state panel" role="alert">
+              Unable to load projects. Please refresh the page.
+            </p>
+          ) : projects.length === 0 ? (
             <p className="empty-state panel">Create your first project to start organizing work.</p>
           ) : (
             <div className="project-grid">

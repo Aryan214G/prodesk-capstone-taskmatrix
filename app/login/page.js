@@ -14,6 +14,8 @@ export default function LoginPage() {
   async function handleSubmit(event) {
     event.preventDefault();
 
+    if (loading) return;
+
     setError("");
     setLoading(true);
 

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import SubtaskList from "@/components/SubtaskList";
 
-export default function TaskModal({ task, onClose, onSave }) {
+export default function TaskModal({ task, onClose, onSave, isSaving = false }) {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [status, setStatus] = useState("backlog");
@@ -27,10 +27,12 @@ export default function TaskModal({ task, onClose, onSave }) {
 
     if (!task) return null;
 
-    function handleSubmit(event) {
+    async function handleSubmit(event) {
         event.preventDefault();
 
-        onSave({
+        if (isSaving) return;
+
+        await onSave({
             title: title.trim(),
             description: description.trim(),
             status,
@@ -46,7 +48,8 @@ export default function TaskModal({ task, onClose, onSave }) {
             <div className="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="task-modal-title">
                 <h2 id="task-modal-title">Edit Task</h2>
 
-                <form className="modal-form" onSubmit={handleSubmit}>
+                <form className="modal-form" onSubmit={handleSubmit} aria-busy={isSaving}>
+                    <fieldset className="modal-form-fields" disabled={isSaving}>
                     <input
                         value={title}
                         onChange={(event) => setTitle(event.target.value)}
@@ -139,13 +142,19 @@ export default function TaskModal({ task, onClose, onSave }) {
                             </button>
                         </div>
                     </div>
+                    </fieldset>
 
                     <div className="modal-actions">
-                        <button className="button" type="submit">
-                            Save changes
+                        <button className="button" type="submit" disabled={isSaving}>
+                            {isSaving ? "Saving..." : "Save changes"}
                         </button>
 
-                        <button className="button button-secondary" type="button" onClick={onClose}>
+                        <button
+                            className="button button-secondary"
+                            type="button"
+                            onClick={onClose}
+                            disabled={isSaving}
+                        >
                             Cancel
                         </button>
                     </div>

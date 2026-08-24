@@ -20,6 +20,8 @@ export default function RegisterPage() {
     async function handleSubmit(event) {
         event.preventDefault();
 
+        if (loading) return;
+
         setError("");
         setLoading(true);
 

@@ -7,6 +7,7 @@ export default function ColumnManager({
     tasks,
     onSave,
     onClose,
+    isSaving = false,
 }) {
     const [localColumns, setLocalColumns] = useState(
         [...columns].sort((a, b) => a.order - b.order)
@@ -15,6 +16,8 @@ export default function ColumnManager({
     const [newColumnName, setNewColumnName] = useState("");
 
     function addColumn() {
+        if (isSaving) return;
+
         const name = newColumnName.trim();
 
         if (!name) return;
@@ -30,6 +33,8 @@ export default function ColumnManager({
     }
 
     function renameColumn(id, name) {
+        if (isSaving) return;
+
         setLocalColumns((current) =>
             current.map((column) =>
                 column.id === id
@@ -40,6 +45,8 @@ export default function ColumnManager({
     }
 
     function removeColumn(id) {
+        if (isSaving) return;
+
         if (localColumns.length <= 1) return;
 
         const hasTasks = tasks.some(
@@ -64,6 +71,8 @@ export default function ColumnManager({
     }
 
     function moveColumn(index, direction) {
+        if (isSaving) return;
+
         const newIndex = index + direction;
 
         if (newIndex < 0 || newIndex >= localColumns.length) {
@@ -86,6 +95,8 @@ export default function ColumnManager({
     }
 
     function handleSave() {
+        if (isSaving) return;
+
         onSave(localColumns);
     }
 
@@ -108,7 +119,7 @@ export default function ColumnManager({
                                     type="button"
                                     aria-label={`Move ${column.name} up`}
                                     onClick={() => moveColumn(index, -1)}
-                                    disabled={index === 0}
+                                    disabled={isSaving || index === 0}
                                 >
                                     ↑
                                 </button>
@@ -118,7 +129,10 @@ export default function ColumnManager({
                                     type="button"
                                     aria-label={`Move ${column.name} down`}
                                     onClick={() => moveColumn(index, 1)}
-                                    disabled={index === localColumns.length - 1}
+                                    disabled={
+                                        isSaving ||
+                                        index === localColumns.length - 1
+                                    }
                                 >
                                     ↓
                                 </button>
@@ -130,12 +144,14 @@ export default function ColumnManager({
                                 onChange={(event) =>
                                     renameColumn(column.id, event.target.value)
                                 }
+                                disabled={isSaving}
                             />
 
                             <button
                                 className="button button-compact button-danger"
                                 type="button"
                                 onClick={() => removeColumn(column.id)}
+                                disabled={isSaving}
                             >
                                 Delete
                             </button>
@@ -150,19 +166,35 @@ export default function ColumnManager({
                             setNewColumnName(event.target.value)
                         }
                         placeholder="New column name"
+                        disabled={isSaving}
                     />
 
-                    <button className="button button-secondary" type="button" onClick={addColumn}>
+                    <button
+                        className="button button-secondary"
+                        type="button"
+                        onClick={addColumn}
+                        disabled={isSaving}
+                    >
                         Add Column
                     </button>
                 </div>
 
                 <div className="modal-actions">
-                    <button className="button" type="button" onClick={handleSave}>
-                        Save
+                    <button
+                        className="button"
+                        type="button"
+                        onClick={handleSave}
+                        disabled={isSaving}
+                    >
+                        {isSaving ? "Saving..." : "Save"}
                     </button>
 
-                    <button className="button button-secondary" type="button" onClick={onClose}>
+                    <button
+                        className="button button-secondary"
+                        type="button"
+                        onClick={onClose}
+                        disabled={isSaving}
+                    >
                         Cancel
                     </button>
                 </div>

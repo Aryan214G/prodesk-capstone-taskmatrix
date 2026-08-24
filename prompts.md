@@ -46,11 +46,27 @@
 
 16) I copied the url of the project of user B, and logged in as user A and pasted it, and it loaded user B's project.
 
-## Sprint 16
+## sprint 16
 
-1) Help me setup an API endpoint in my next.js application using gemini api.
+1) help me setup an api endpoint in my next.js application using gemini api.
 
-2) Explain this command:
-curl -X POST http://localhost:3000/api/ai/subtasks \
-  -H "Content-Type: application/json" \
-  -d '{"title":"Implement Firebase authentication","description":"Add login and registration using Firebase."}'
+2) explain this command:
+curl -x post http://localhost:3000/api/ai/subtasks \
+  -h "content type: application/json" \
+  -d '{"title":"implement firebase authentication","description":"add login and registration using firebase."}'
+
+3) help me integrate ai generated subtasks into my existing taskform without changing the existing task creation flow.
+
+4) help me add a subtask editor to my task creation and task editing ui so users can review and modify ai generated subtasks before saving.
+
+5) help me make taskmatrix responsive for mobile devices and identify the ui changes needed to satisfy the sprint 16 mobile responsiveness requirement.
+
+6) help me implement a responsive hamburger menu for taskmatrix and move the logout action into the mobile navigation.
+
+7) help me make the project cards horizontally scrollable on small screens without causing the entire page to overflow horizontally.
+
+8) help me improve the spacing and layout of the existing taskmatrix task creation form on desktop and mobile without changing its functionality.
+
+9) help me add sonner toast notifications to taskmatrix for successful and failed asynchronous operations such as task creation, editing, deletion, status changes, and ai subtask generation.
+
+10) help me add polished loading states to the existing asynchronous data fetching and mutation operations in taskmatrix without changing the application's architecture or adding new features.

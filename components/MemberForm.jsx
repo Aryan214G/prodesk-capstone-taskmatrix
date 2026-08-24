@@ -14,7 +14,7 @@ export default function MemberForm({ projectId }) {
   async function handleSubmit(event) {
     event.preventDefault();
 
-    if (!user?.uid || !email.trim()) {
+    if (loading || !user?.uid || !email.trim()) {
       return;
     }
 
@@ -43,6 +43,7 @@ export default function MemberForm({ projectId }) {
         value={email}
         onChange={(event) => setEmail(event.target.value)}
         required
+        disabled={loading}
       />
 
       <button className="button" type="submit" disabled={loading}>

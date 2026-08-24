@@ -22,7 +22,12 @@ export default function AuthGuard({ children }) {
   }, [router]);
 
   if (checking) {
-    return <p>Checking authentication...</p>;
+    return (
+      <main className="page-message loading-state" role="status">
+        <span className="loading-spinner" aria-hidden="true" />
+        <p>Checking authentication...</p>
+      </main>
+    );
   }
 
   return children;

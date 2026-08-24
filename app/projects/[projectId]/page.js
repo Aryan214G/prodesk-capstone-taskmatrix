@@ -39,21 +39,32 @@ export default function ProjectPage() {
     const [members, setMembers] = useState([]);
     const [columns, setColumns] = useState(defaultColumns);
     const [showColumnManager, setShowColumnManager] = useState(false);
+    const [loadError, setLoadError] = useState(false);
+    const [savingColumns, setSavingColumns] = useState(false);
+    const [savingTask, setSavingTask] = useState(false);
+    const [deletingTaskIds, setDeletingTaskIds] = useState([]);
+    const [updatingTaskIds, setUpdatingTaskIds] = useState([]);
 
 
 
     useEffect(() => {
         if (!projectId || !user?.uid) return;
 
-        async function loadProject() {
-            try {
+        let isActive = true;
 
+        async function loadProject() {
+            setLoading(true);
+            setLoadError(false);
+
+            try {
                 const projectSnapshot = await getDoc(
                     doc(db, "projects", projectId)
                 );
 
                 if (!projectSnapshot.exists()) {
-                    setProject(null);
+                    if (isActive) {
+                        setProject(null);
+                    }
                     return;
                 }
 
@@ -67,46 +78,90 @@ export default function ProjectPage() {
                     (projectData.memberIds || []).includes(user?.uid);
 
                 if (!isMember) {
-                    setProject(null);
+                    if (isActive) {
+                        setProject(null);
+                    }
                     return;
                 }
-
-                setProject(projectData);
-                setColumns(projectData.columns || defaultColumns);
 
                 const projectMembers = await getProjectMembers(
                     projectData.memberIds || []
                 );
 
-                setMembers(projectMembers);
-
                 const projectTasks = await getProjectTasks(projectId);
-                setTasks(projectTasks);
+
+                if (isActive) {
+                    setProject(projectData);
+                    setColumns(projectData.columns || defaultColumns);
+                    setMembers(projectMembers);
+                    setTasks(projectTasks);
+                }
             } catch (error) {
                 console.error("Failed to load project:", error);
+
+                if (isActive) {
+                    setProject(null);
+                    setLoadError(true);
+                }
             } finally {
-                setLoading(false);
+                if (isActive) {
+                    setLoading(false);
+                }
             }
         }
 
         loadProject();
+
+        return () => {
+            isActive = false;
+        };
     }, [projectId, user]);
 
     async function handleColumnsSave(updatedColumns) {
-        await updateDoc(doc(db, "projects", projectId), {
-            columns: updatedColumns,
-        });
+        if (savingColumns) return;
 
-        setColumns(updatedColumns);
-        setShowColumnManager(false);
+        setSavingColumns(true);
+
+        try {
+            await updateDoc(doc(db, "projects", projectId), {
+                columns: updatedColumns,
+            });
+
+            setColumns(updatedColumns);
+            setShowColumnManager(false);
+        } catch (error) {
+            console.error("Failed to save columns:", error);
+            toast.error("Failed to save columns");
+        } finally {
+            setSavingColumns(false);
+        }
     }
 
     if (loading) {
-        return <p className="page-message">Loading project...</p>;
+        return (
+            <AuthGuard>
+                <main className="page-message loading-state" role="status">
+                    <span className="loading-spinner" aria-hidden="true" />
+                    <p>Loading project...</p>
+                </main>
+            </AuthGuard>
+        );
+    }
+
+    if (loadError) {
+        return (
+            <AuthGuard>
+                <p className="page-message" role="alert">Unable to load project.</p>
+            </AuthGuard>
+        );
     }
 
     if (!project) {
-        return <p className="page-message">Project not found.</p>;
+        return (
+            <AuthGuard>
+                <p className="page-message">Project not found.</p>
+            </AuthGuard>
+        );
     }
 
     return (
@@ -139,6 +194,7 @@ export default function ProjectPage() {
                         className="button button-secondary manage-columns-button"
                         type="button"
                         onClick={() => setShowColumnManager(true)}
+                        disabled={savingColumns}
                     >
                         Manage Columns
                     </button>
@@ -149,6 +205,7 @@ export default function ProjectPage() {
                             tasks={tasks}
                             onSave={handleColumnsSave}
                             onClose={() => setShowColumnManager(false)}
+                            isSaving={savingColumns}
                         />
                     )}
 
@@ -157,7 +214,16 @@ export default function ProjectPage() {
                         tasks={tasks}
                         columns={columns}
                         onEdit={(task) => setSelectedTask(task)}
+                        deletingTaskIds={deletingTaskIds}
+                        updatingTaskIds={updatingTaskIds}
                         onDelete={async (taskId) => {
+                            if (
+                                deletingTaskIds.includes(taskId) ||
+                                updatingTaskIds.includes(taskId)
+                            ) {
+                                return;
+                            }
+
                             const confirmed = window.confirm(
                                 "Are you sure you want to delete this task?"
                             );
@@ -167,6 +233,11 @@ export default function ProjectPage() {
                             const task = tasks.find((item) => item.id === taskId);
 
                             if (!task) return;
+
+                            setDeletingTaskIds((current) => [
+                                ...current,
+                                taskId,
+                            ]);
 
                             try {
                                 await deleteTask(taskId);
@@ -188,13 +259,29 @@ export default function ProjectPage() {
                             } catch (error) {
                                 console.error("Failed to delete task:", error);
                                 toast.error("Failed to delete task");
+                            } finally {
+                                setDeletingTaskIds((current) =>
+                                    current.filter((id) => id !== taskId)
+                                );
                             }
                         }}
 
                         onStatusChange={async (taskId, newStatus) => {
+                            if (
+                                deletingTaskIds.includes(taskId) ||
+                                updatingTaskIds.includes(taskId)
+                            ) {
+                                return;
+                            }
+
                             const task = tasks.find((item) => item.id === taskId);
 
                             if (!task) return;
+
+                            setUpdatingTaskIds((current) => [
+                                ...current,
+                                taskId,
+                            ]);
 
                             try {
                                 await updateTask(taskId, {
@@ -227,14 +314,27 @@ export default function ProjectPage() {
                                 );
                             } catch (error) {
                                 console.error("Failed to update task status:", error);
+                            } finally {
+                                setUpdatingTaskIds((current) =>
+                                    current.filter((id) => id !== taskId)
+                                );
                             }
                         }}
                     />
                 </section>
                 <TaskModal
                     task={selectedTask}
-                    onClose={() => setSelectedTask(null)}
+                    isSaving={savingTask}
+                    onClose={() => {
+                        if (!savingTask) {
+                            setSelectedTask(null);
+                        }
+                    }}
                     onSave={async (updates) => {
+                        if (!selectedTask || savingTask) return;
+
+                        setSavingTask(true);
+
                         try {
                             await updateTask(selectedTask.id, updates);
 
@@ -260,6 +360,8 @@ export default function ProjectPage() {
                         } catch (error) {
                             console.error("Failed to update task:", error);
                             toast.error("Failed to update task");
+                        } finally {
+                            setSavingTask(false);
                         }
                     }}
                 />

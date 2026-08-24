@@ -29,6 +29,10 @@ export default function TaskForm({
 
 
     async function handleGenerateSubtasks() {
+        if (loading || generatingSubtasks) {
+            return;
+        }
+
         if (!title.trim()) {
             setAiError("Enter a task title first.");
             return;
@@ -77,7 +81,13 @@ export default function TaskForm({
     async function handleSubmit(event) {
         event.preventDefault();
 
-        if (!title.trim() || !projectId || !user?.uid) {
+        if (
+            loading ||
+            generatingSubtasks ||
+            !title.trim() ||
+            !projectId ||
+            !user?.uid
+        ) {
             return;
         }
 
@@ -242,7 +252,7 @@ export default function TaskForm({
                         className="button button-secondary"
                         type="button"
                         onClick={handleGenerateSubtasks}
-                        disabled={generatingSubtasks}
+                        disabled={generatingSubtasks || loading}
                     >
                         {generatingSubtasks
                             ? "Generating..."
@@ -260,7 +270,11 @@ export default function TaskForm({
                 />
             </div>
 
-            <button className="button task-submit" type="submit" disabled={loading}>
+            <button
+                className="button task-submit"
+                type="submit"
+                disabled={loading || generatingSubtasks}
+            >
                 {loading ? "Creating..." : "Create task"}
             </button>
         </form>

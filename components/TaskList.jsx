@@ -10,10 +10,18 @@ import {
 
 
 
-function TaskCard({ task, onEdit, onDelete, dragging = false }) {
+function TaskCard({
+  task,
+  onEdit,
+  onDelete,
+  dragging = false,
+  isDeleting = false,
+  isUpdating = false,
+}) {
   const { attributes, listeners, setNodeRef, transform } =
     useDraggable({
       id: task.id,
+      disabled: isDeleting || isUpdating,
     });
 
   const style = transform
@@ -29,6 +37,7 @@ function TaskCard({ task, onEdit, onDelete, dragging = false }) {
       {...listeners}
       {...attributes}
       className="task-card"
+      aria-busy={isDeleting || isUpdating}
     >
       <h3>{task.title}</h3>
 
@@ -39,12 +48,21 @@ function TaskCard({ task, onEdit, onDelete, dragging = false }) {
       {task.dueDate && <p className="task-date">Due {task.dueDate}</p>}
 
       {!dragging && (
+        <>
+          {isUpdating && (
+            <p className="task-card-loading" role="status">
+              <span className="loading-spinner" aria-hidden="true" />
+              Moving task...
+            </p>
+          )}
+
         <div className="task-card-actions">
           <button
             className="button button-compact button-secondary"
             type="button"
             onPointerDown={(event) => event.stopPropagation()}
             onClick={() => onEdit(task)}
+            disabled={isDeleting || isUpdating}
           >
             Edit
           </button>
@@ -54,16 +72,25 @@ function TaskCard({ task, onEdit, onDelete, dragging = false }) {
             type="button"
             onPointerDown={(event) => event.stopPropagation()}
             onClick={() => onDelete(task.id)}
+            disabled={isDeleting || isUpdating}
           >
-            Delete
+            {isDeleting ? "Deleting..." : "Delete"}
           </button>
         </div>
+        </>
       )}
     </article>
   );
 }
 
-function KanbanColumn({ column, tasks, onEdit, onDelete }) {
+function KanbanColumn({
+  column,
+  tasks,
+  onEdit,
+  onDelete,
+  deletingTaskIds,
+  updatingTaskIds,
+}) {
   const { setNodeRef, isOver } = useDroppable({
     id: column.id,
   });
@@ -89,6 +116,8 @@ function KanbanColumn({ column, tasks, onEdit, onDelete }) {
             task={task}
             onEdit={onEdit}
             onDelete={onDelete}
+            isDeleting={deletingTaskIds.includes(task.id)}
+            isUpdating={updatingTaskIds.includes(task.id)}
           />
         ))}
       </div>
@@ -102,6 +131,8 @@ export default function TaskList({
   onEdit,
   onDelete,
   onStatusChange,
+  deletingTaskIds = [],
+  updatingTaskIds = [],
 }) {
   return (
     <DndContext
@@ -110,6 +141,13 @@ export default function TaskList({
         const { active, over } = event;
 
         if (!over) return;
+
+        if (
+          deletingTaskIds.includes(active.id) ||
+          updatingTaskIds.includes(active.id)
+        ) {
+          return;
+        }
 
         const task = tasks.find((item) => item.id === active.id);
 
@@ -138,6 +176,8 @@ export default function TaskList({
               )}
               onEdit={onEdit}
               onDelete={onDelete}
+              deletingTaskIds={deletingTaskIds}
+              updatingTaskIds={updatingTaskIds}
             />
           ))}
       </div>

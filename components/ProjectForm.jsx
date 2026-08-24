@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { toast } from "sonner";
 import { createProject } from "@/lib/projects";
 
-export default function ProjectForm({ onCreated }) {
+export default function ProjectForm({ onCreated, disabled = false }) {
   const user = useSelector((state) => state.auth.user);
 
   const [name, setName] = useState("");
@@ -15,7 +15,7 @@ export default function ProjectForm({ onCreated }) {
   async function handleSubmit(event) {
     event.preventDefault();
 
-    if (!name.trim() || !user?.uid) {
+    if (loading || disabled || !name.trim() || !user?.uid) {
       return;
     }
 
@@ -59,15 +59,17 @@ export default function ProjectForm({ onCreated }) {
         value={name}
         onChange={(event) => setName(event.target.value)}
         required
+        disabled={loading || disabled}
       />
 
       <textarea
         placeholder="Description"
         value={description}
         onChange={(event) => setDescription(event.target.value)}
+        disabled={loading || disabled}
       />
 
-      <button className="button" type="submit" disabled={loading}>
+      <button className="button" type="submit" disabled={loading || disabled}>
         {loading ? "Creating..." : "Create project"}
       </button>
     </form>
