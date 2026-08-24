@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { createTask } from "@/lib/tasks";
 import { createActivity } from "@/lib/activities";
 import SubtaskList from "@/components/SubtaskList";
+import { toast } from "sonner";
 
 export default function TaskForm({
     projectId,
@@ -61,8 +62,11 @@ export default function TaskForm({
             }));
 
             setSubtasks(generatedSubtasks);
+            toast.success("Subtasks generated");
+
         } catch (error) {
             console.error("Failed to generate subtasks:", error);
+            toast.error(error.message || "Failed to generate subtasks");
             setAiError(error.message);
         } finally {
             setGeneratingSubtasks(false);
@@ -102,6 +106,8 @@ export default function TaskForm({
                 taskId: task.id,
             });
 
+            toast.success("Task created successfully");
+
             setTitle("");
             setDescription("");
             setPriority("medium");
@@ -116,6 +122,7 @@ export default function TaskForm({
             onCreated?.(task);
         } catch (error) {
             console.error("Failed to create task:", error);
+            toast.error("Failed to create task");
         } finally {
             setLoading(false);
         }

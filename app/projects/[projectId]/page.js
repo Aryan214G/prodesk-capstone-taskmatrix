@@ -16,6 +16,7 @@ import {
 } from "@/lib/projects";
 import ColumnManager from "@/components/ColumnManager";
 import MemberForm from "@/components/MemberForm";
+import { toast } from "sonner";
 
 const defaultColumns = [
     { id: "backlog", name: "Backlog", order: 0 },
@@ -182,8 +183,11 @@ export default function ProjectPage() {
                                 setTasks((current) =>
                                     current.filter((task) => task.id !== taskId)
                                 );
+
+                                toast.success("Task deleted");
                             } catch (error) {
                                 console.error("Failed to delete task:", error);
+                                toast.error("Failed to delete task");
                             }
                         }}
 
@@ -217,6 +221,10 @@ export default function ProjectPage() {
                                             : task
                                     )
                                 );
+
+                                toast.success(
+                                    `Task moved to ${newColumn?.name || newStatus}`
+                                );
                             } catch (error) {
                                 console.error("Failed to update task status:", error);
                             }
@@ -247,9 +255,11 @@ export default function ProjectPage() {
                                 )
                             );
 
+                            toast.success("Task updated");
                             setSelectedTask(null);
                         } catch (error) {
                             console.error("Failed to update task:", error);
+                            toast.error("Failed to update task");
                         }
                     }}
                 />

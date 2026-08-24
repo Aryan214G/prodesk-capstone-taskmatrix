@@ -1,5 +1,6 @@
 import "./globals.css";
 import StoreProvider from "@/store/StoreProvider";
+import { Toaster } from "sonner";
 
 export const metadata = {
   title: "TaskMatrix",
@@ -11,6 +12,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <StoreProvider>{children}</StoreProvider>
+        <Toaster position="bottom-right" richColors />
       </body>
     </html>
   );
