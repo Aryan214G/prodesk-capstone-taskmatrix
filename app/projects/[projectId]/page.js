@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import AuthGuard from "@/components/AuthGuard";
-import TaskForm from "@/components/TaskForm";
+import CreateTaskModal from "@/components/CreateTaskModal";
 import TaskList from "@/components/TaskList";
 import { db } from "@/lib/firebase";
 import { getProjectTasks, updateTask, deleteTask } from "@/lib/tasks";
@@ -44,6 +44,7 @@ export default function ProjectPage() {
     const [savingTask, setSavingTask] = useState(false);
     const [deletingTaskIds, setDeletingTaskIds] = useState([]);
     const [updatingTaskIds, setUpdatingTaskIds] = useState([]);
+    const [showTaskForm, setShowTaskForm] = useState(false);
 
 
 
@@ -177,11 +178,22 @@ export default function ProjectPage() {
                 <MemberForm projectId={projectId} />
 
 
-                <TaskForm
+                <button
+                    className="button"
+                    type="button"
+                    onClick={() => setShowTaskForm(true)}
+                >
+                    Create task
+                </button>
+
+                <CreateTaskModal
+                    open={showTaskForm}
                     projectId={projectId}
                     members={members}
+                    onClose={() => setShowTaskForm(false)}
                     onCreated={(task) => {
                         setTasks((current) => [task, ...current]);
+                        setShowTaskForm(false);
                     }}
                 />
 
