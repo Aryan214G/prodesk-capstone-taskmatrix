@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { addProjectMember } from "@/lib/projects";
+import { UserPlus } from "lucide-react";
 
 export default function MemberForm({ projectId }) {
   const user = useSelector((state) => state.auth.user);
@@ -47,7 +48,7 @@ export default function MemberForm({ projectId }) {
       />
 
       <button className="button" type="submit" disabled={loading}>
-        {loading ? "Adding..." : "Add member"}
+        {loading ? "Adding..." : <><UserPlus size={16} /> Add member</>}
       </button>
 
       {message && <p className="form-message">{message}</p>}

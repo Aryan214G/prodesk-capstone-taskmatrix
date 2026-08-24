@@ -6,6 +6,7 @@ import { createTask } from "@/lib/tasks";
 import { createActivity } from "@/lib/activities";
 import SubtaskList from "@/components/SubtaskList";
 import { toast } from "sonner";
+import { Sparkles, Plus, Tag } from "lucide-react";
 
 export default function TaskForm({
     projectId,
@@ -239,7 +240,7 @@ export default function TaskForm({
                             setLabelInput("");
                         }}
                     >
-                        Add label
+                        <Tag size={14} /> Add label
                     </button>
                 </div>
             </div>
@@ -256,7 +257,7 @@ export default function TaskForm({
                     >
                         {generatingSubtasks
                             ? "Generating..."
-                            : "✨ Generate with AI"}
+                            : <><Sparkles size={16} /> Generate with AI</>}
                     </button>
                 </div>
 
@@ -275,7 +276,7 @@ export default function TaskForm({
                 type="submit"
                 disabled={loading || generatingSubtasks}
             >
-                {loading ? "Creating..." : "Create task"}
+                {loading ? "Creating..." : <><Plus size={16} /> Create task</>}
             </button>
         </form>
     );

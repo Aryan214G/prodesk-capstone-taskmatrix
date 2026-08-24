@@ -17,6 +17,7 @@ import {
 import ColumnManager from "@/components/ColumnManager";
 import MemberForm from "@/components/MemberForm";
 import { toast } from "sonner";
+import { Plus, Settings } from "lucide-react";
 
 const defaultColumns = [
     { id: "backlog", name: "Backlog", order: 0 },
@@ -183,7 +184,7 @@ export default function ProjectPage() {
                     type="button"
                     onClick={() => setShowTaskForm(true)}
                 >
-                    Create task
+                    <Plus size={16} /> Create task
                 </button>
 
                 <CreateTaskModal
@@ -208,7 +209,7 @@ export default function ProjectPage() {
                         onClick={() => setShowColumnManager(true)}
                         disabled={savingColumns}
                     >
-                        Manage Columns
+                        <Settings size={16} /> Manage Columns
                     </button>
 
                     {showColumnManager && (

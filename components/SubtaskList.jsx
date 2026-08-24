@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Plus, Trash2 } from "lucide-react";
 
 export default function SubtaskList({ subtasks = [], onChange }) {
     const [title, setTitle] = useState("");
@@ -54,7 +55,7 @@ export default function SubtaskList({ subtasks = [], onChange }) {
                         type="button"
                         onClick={() => deleteSubtask(subtask.id)}
                     >
-                        Delete
+                        <Trash2 size={13} /> Delete
                     </button>
                 </div>
             ))}
@@ -68,7 +69,7 @@ export default function SubtaskList({ subtasks = [], onChange }) {
                 />
 
                 <button className="button button-secondary" type="button" onClick={addSubtask}>
-                    Add
+                    <Plus size={14} /> Add
                 </button>
             </div>
         </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import TaskForm from "@/components/TaskForm";
+import { X } from "lucide-react";
 
 export default function CreateTaskModal({ open, projectId, members, onClose, onCreated }) {
     if (!open) return null;
@@ -22,7 +23,7 @@ export default function CreateTaskModal({ open, projectId, members, onClose, onC
                         type="button"
                         onClick={onClose}
                     >
-                        Cancel
+                        <X size={16} /> Cancel
                     </button>
                 </div>
             </div>

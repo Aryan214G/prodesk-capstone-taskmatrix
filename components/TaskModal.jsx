@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import SubtaskList from "@/components/SubtaskList";
+import { Save, X, Tag } from "lucide-react";
 
 export default function TaskModal({ task, onClose, onSave, isSaving = false, members = [] }) {
     const [title, setTitle] = useState("");
@@ -154,7 +155,7 @@ export default function TaskModal({ task, onClose, onSave, isSaving = false, mem
                                     setLabelInput("");
                                 }}
                             >
-                                Add label
+                                <Tag size={14} /> Add label
                             </button>
                         </div>
                     </div>
@@ -162,7 +163,7 @@ export default function TaskModal({ task, onClose, onSave, isSaving = false, mem
 
                     <div className="modal-actions">
                         <button className="button" type="submit" disabled={isSaving}>
-                            {isSaving ? "Saving..." : "Save changes"}
+                            {isSaving ? "Saving..." : <><Save size={16} /> Save changes</>}
                         </button>
 
                         <button
@@ -171,7 +172,7 @@ export default function TaskModal({ task, onClose, onSave, isSaving = false, mem
                             onClick={onClose}
                             disabled={isSaving}
                         >
-                            Cancel
+                            <X size={16} /> Cancel
                         </button>
                     </div>
                 </form>

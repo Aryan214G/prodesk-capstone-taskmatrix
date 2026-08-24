@@ -7,6 +7,7 @@ import {
   useDraggable,
   useDroppable,
 } from "@dnd-kit/core";
+import { Pencil, Trash2, User, Calendar } from "lucide-react";
 
 
 
@@ -50,10 +51,10 @@ function TaskCard({
 
       <p className={`priority-pill priority-${task.priority}`}>{task.priority}</p>
 
-      {task.dueDate && <p className="task-date">Due {task.dueDate}</p>}
+      {task.dueDate && <p className="task-date"><Calendar size={13} /> Due {task.dueDate}</p>}
 
       {assignee && (
-        <p className="task-assignee">Assigned to {assignee.name || assignee.email}</p>
+        <p className="task-assignee"><User size={13} /> Assigned to {assignee.name || assignee.email}</p>
       )}
 
       {!dragging && (
@@ -73,7 +74,7 @@ function TaskCard({
             onClick={() => onEdit(task)}
             disabled={isDeleting || isUpdating}
           >
-            Edit
+            <Pencil size={13} /> Edit
           </button>
 
           <button
@@ -83,7 +84,7 @@ function TaskCard({
             onClick={() => onDelete(task.id)}
             disabled={isDeleting || isUpdating}
           >
-            {isDeleting ? "Deleting..." : "Delete"}
+            {isDeleting ? "Deleting..." : <><Trash2 size={13} /> Delete</>}
           </button>
         </div>
         </>

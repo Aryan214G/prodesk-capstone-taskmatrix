@@ -10,6 +10,7 @@ import { getUserProjects } from "@/lib/projects";
 import ProjectForm from "@/components/ProjectForm";
 import Link from "next/link";
 import { subscribeToProjectActivity } from "@/lib/activities";
+import { LogOut, Menu, ArrowRight } from "lucide-react";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -149,7 +150,7 @@ export default function DashboardPage() {
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((current) => !current)}
           >
-            ☰
+            <Menu size={20} />
           </button>
 
           <nav className={`dashboard-menu ${menuOpen ? "is-open" : ""}`}>
@@ -158,7 +159,7 @@ export default function DashboardPage() {
               type="button"
               onClick={handleLogout}
             >
-              Logout
+              <LogOut size={16} /> Logout
             </button>
           </nav>
         </header>
@@ -224,7 +225,7 @@ export default function DashboardPage() {
                   <h3>{project.name}</h3>
                   <p>{project.description}</p>
                   <Link className="text-link" href={`/projects/${project.id}`}>
-                    Open project
+                    Open project <ArrowRight size={14} />
                   </Link>
                 </article>
               ))}

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
 import { createProject } from "@/lib/projects";
+import { Plus } from "lucide-react";
 
 export default function ProjectForm({ onCreated, disabled = false }) {
   const user = useSelector((state) => state.auth.user);
@@ -70,7 +71,7 @@ export default function ProjectForm({ onCreated, disabled = false }) {
       />
 
       <button className="button" type="submit" disabled={loading || disabled}>
-        {loading ? "Creating..." : "Create project"}
+        {loading ? "Creating..." : <><Plus size={16} /> Create project</>}
       </button>
     </form>
   );

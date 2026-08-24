@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ChevronUp, ChevronDown, Trash2, Plus, Save, X } from "lucide-react";
 
 export default function ColumnManager({
     columns,
@@ -121,7 +122,7 @@ export default function ColumnManager({
                                     onClick={() => moveColumn(index, -1)}
                                     disabled={isSaving || index === 0}
                                 >
-                                    ↑
+                                    <ChevronUp size={14} />
                                 </button>
 
                                 <button
@@ -134,7 +135,7 @@ export default function ColumnManager({
                                         index === localColumns.length - 1
                                     }
                                 >
-                                    ↓
+                                    <ChevronDown size={14} />
                                 </button>
                             </div>
 
@@ -153,7 +154,7 @@ export default function ColumnManager({
                                 onClick={() => removeColumn(column.id)}
                                 disabled={isSaving}
                             >
-                                Delete
+                                <Trash2 size={13} /> Delete
                             </button>
                         </div>
                     ))}
@@ -175,7 +176,7 @@ export default function ColumnManager({
                         onClick={addColumn}
                         disabled={isSaving}
                     >
-                        Add Column
+                        <Plus size={14} /> Add Column
                     </button>
                 </div>
 
@@ -186,7 +187,7 @@ export default function ColumnManager({
                         onClick={handleSave}
                         disabled={isSaving}
                     >
-                        {isSaving ? "Saving..." : "Save"}
+                        {isSaving ? "Saving..." : <><Save size={16} /> Save</>}
                     </button>
 
                     <button
@@ -195,7 +196,7 @@ export default function ColumnManager({
                         onClick={onClose}
                         disabled={isSaving}
                     >
-                        Cancel
+                        <X size={16} /> Cancel
                     </button>
                 </div>
             </div>

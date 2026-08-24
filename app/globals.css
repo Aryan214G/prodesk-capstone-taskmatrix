@@ -138,6 +138,9 @@ input[type="date"] {
 }
 
 .button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
   min-height: 40px;
   border: 1px solid var(--blue);
   border-radius: 5px;
@@ -273,6 +276,9 @@ input[type="date"] {
 }
 
 .text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
   font-size: 0.9rem;
   font-weight: 600;
 }
@@ -506,12 +512,18 @@ input[type="date"] {
 }
 
 .task-date {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
   margin-bottom: 0.7rem;
   color: var(--muted);
   font-size: 0.78rem;
 }
 
 .task-assignee {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
   margin-bottom: 0.7rem;
   color: var(--muted);
   font-size: 0.78rem;
@@ -640,6 +652,9 @@ input[type="date"] {
 }
 
 .text-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
   border: 0;
   background: transparent;
   padding: 0.2rem;
