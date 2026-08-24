@@ -17,6 +17,7 @@ function TaskCard({
   dragging = false,
   isDeleting = false,
   isUpdating = false,
+  members = [],
 }) {
   const { attributes, listeners, setNodeRef, transform } =
     useDraggable({
@@ -29,6 +30,10 @@ function TaskCard({
       transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
     }
     : undefined;
+
+  const assignee = task.assigneeId
+    ? members.find((m) => m.uid === task.assigneeId)
+    : null;
 
   return (
     <article
@@ -46,6 +51,10 @@ function TaskCard({
       <p className={`priority-pill priority-${task.priority}`}>{task.priority}</p>
 
       {task.dueDate && <p className="task-date">Due {task.dueDate}</p>}
+
+      {assignee && (
+        <p className="task-assignee">Assigned to {assignee.name || assignee.email}</p>
+      )}
 
       {!dragging && (
         <>
@@ -90,6 +99,7 @@ function KanbanColumn({
   onDelete,
   deletingTaskIds,
   updatingTaskIds,
+  members,
 }) {
   const { setNodeRef, isOver } = useDroppable({
     id: column.id,
@@ -118,6 +128,7 @@ function KanbanColumn({
             onDelete={onDelete}
             isDeleting={deletingTaskIds.includes(task.id)}
             isUpdating={updatingTaskIds.includes(task.id)}
+            members={members}
           />
         ))}
       </div>
@@ -133,6 +144,7 @@ export default function TaskList({
   onStatusChange,
   deletingTaskIds = [],
   updatingTaskIds = [],
+  members = [],
 }) {
   return (
     <DndContext
@@ -178,6 +190,7 @@ export default function TaskList({
               onDelete={onDelete}
               deletingTaskIds={deletingTaskIds}
               updatingTaskIds={updatingTaskIds}
+              members={members}
             />
           ))}
       </div>

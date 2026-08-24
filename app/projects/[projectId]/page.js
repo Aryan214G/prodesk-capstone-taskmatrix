@@ -228,6 +228,7 @@ export default function ProjectPage() {
                         onEdit={(task) => setSelectedTask(task)}
                         deletingTaskIds={deletingTaskIds}
                         updatingTaskIds={updatingTaskIds}
+                        members={members}
                         onDelete={async (taskId) => {
                             if (
                                 deletingTaskIds.includes(taskId) ||
@@ -337,6 +338,7 @@ export default function ProjectPage() {
                 <TaskModal
                     task={selectedTask}
                     isSaving={savingTask}
+                    members={members}
                     onClose={() => {
                         if (!savingTask) {
                             setSelectedTask(null);

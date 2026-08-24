@@ -3,12 +3,13 @@
 import { useEffect, useState } from "react";
 import SubtaskList from "@/components/SubtaskList";
 
-export default function TaskModal({ task, onClose, onSave, isSaving = false }) {
+export default function TaskModal({ task, onClose, onSave, isSaving = false, members = [] }) {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [status, setStatus] = useState("backlog");
     const [priority, setPriority] = useState("medium");
     const [dueDate, setDueDate] = useState("");
+    const [assigneeId, setAssigneeId] = useState("");
     const [subtasks, setSubtasks] = useState([]);
     const [labels, setLabels] = useState([]);
     const [labelInput, setLabelInput] = useState("");
@@ -21,6 +22,7 @@ export default function TaskModal({ task, onClose, onSave, isSaving = false }) {
         setStatus(task.status || "backlog");
         setPriority(task.priority || "medium");
         setDueDate(task.dueDate || "");
+        setAssigneeId(task.assigneeId || "");
         setSubtasks(task.subtasks || []);
         setLabels(task.labels || []);
     }, [task]);
@@ -38,6 +40,7 @@ export default function TaskModal({ task, onClose, onSave, isSaving = false }) {
             status,
             priority,
             dueDate,
+            assigneeId: assigneeId || null,
             subtasks,
             labels,
         });
@@ -88,6 +91,19 @@ export default function TaskModal({ task, onClose, onSave, isSaving = false }) {
                         value={dueDate}
                         onChange={(event) => setDueDate(event.target.value)}
                     />
+
+                    <select
+                        value={assigneeId}
+                        onChange={(event) => setAssigneeId(event.target.value)}
+                    >
+                        <option value="">Unassigned</option>
+
+                        {members.map((member) => (
+                            <option key={member.uid} value={member.uid}>
+                                {member.name || member.email}
+                            </option>
+                        ))}
+                    </select>
 
                     <SubtaskList
                         subtasks={subtasks}
