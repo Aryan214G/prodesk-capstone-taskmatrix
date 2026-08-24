@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { createTask } from "@/lib/tasks";
 import { createActivity } from "@/lib/activities";
+import SubtaskList from "@/components/SubtaskList";
 
 export default function TaskForm({
     projectId,
@@ -21,6 +22,53 @@ export default function TaskForm({
     const [assigneeId, setAssigneeId] = useState("");
     const [labels, setLabels] = useState([]);
     const [labelInput, setLabelInput] = useState("");
+    const [subtasks, setSubtasks] = useState([]);
+    const [generatingSubtasks, setGeneratingSubtasks] = useState(false);
+    const [aiError, setAiError] = useState("");
+
+
+    async function handleGenerateSubtasks() {
+        if (!title.trim()) {
+            setAiError("Enter a task title first.");
+            return;
+        }
+
+        setGeneratingSubtasks(true);
+        setAiError("");
+
+        try {
+            const response = await fetch("/api/ai/subtasks", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    title: title.trim(),
+                    description: description.trim(),
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || "Failed to generate subtasks.");
+            }
+
+            const generatedSubtasks = data.subtasks.map((text) => ({
+                id: crypto.randomUUID(),
+                title: text,
+                completed: false,
+            }));
+
+            setSubtasks(generatedSubtasks);
+        } catch (error) {
+            console.error("Failed to generate subtasks:", error);
+            setAiError(error.message);
+        } finally {
+            setGeneratingSubtasks(false);
+        }
+    }
+
 
     async function handleSubmit(event) {
         event.preventDefault();
@@ -42,7 +90,7 @@ export default function TaskForm({
                 ownerId: user.uid,
                 assigneeId: assigneeId || null,
                 labels,
-                subtasks: [],
+                subtasks,
             });
 
             await createActivity({
@@ -62,6 +110,8 @@ export default function TaskForm({
             setAssigneeId("");
             setLabels([]);
             setLabelInput("");
+            setSubtasks([]);
+            setAiError("");
 
             onCreated?.(task);
         } catch (error) {
@@ -175,6 +225,32 @@ export default function TaskForm({
                         Add label
                     </button>
                 </div>
+            </div>
+
+            <div className="subtask-editor">
+                <div className="subtask-header">
+                    <h3>Subtasks</h3>
+
+                    <button
+                        className="button button-secondary"
+                        type="button"
+                        onClick={handleGenerateSubtasks}
+                        disabled={generatingSubtasks}
+                    >
+                        {generatingSubtasks
+                            ? "Generating..."
+                            : "Generate with AI"}
+                    </button>
+                </div>
+
+                {aiError && (
+                    <p className="form-error">{aiError}</p>
+                )}
+
+                <SubtaskList
+                    subtasks={subtasks}
+                    onChange={setSubtasks}
+                />
             </div>
 
             <button className="button task-submit" type="submit" disabled={loading}>
