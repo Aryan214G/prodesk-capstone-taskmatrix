@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useSelector } from "react-redux";
+import { toast } from "sonner";
 import { createProject } from "@/lib/projects";
 
 export default function ProjectForm({ onCreated }) {
@@ -40,6 +41,7 @@ export default function ProjectForm({ onCreated }) {
       setDescription("");
 
       onCreated?.(project);
+      toast.success("Project created");
     } catch (error) {
       console.error("Failed to create project:", error);
     } finally {
