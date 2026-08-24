@@ -70,3 +70,5 @@ curl -x post http://localhost:3000/api/ai/subtasks \
 9) help me add sonner toast notifications to taskmatrix for successful and failed asynchronous operations such as task creation, editing, deletion, status changes, and ai subtask generation.
 
 10) help me add polished loading states to the existing asynchronous data fetching and mutation operations in taskmatrix without changing the application's architecture or adding new features.
+
+11) Add lucide icons wherever necessary.
