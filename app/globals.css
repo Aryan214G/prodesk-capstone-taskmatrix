@@ -77,6 +77,11 @@ input[type="date"] { color-scheme: dark; }
 .button-compact { min-height: 30px; padding: 0.3rem 0.55rem; font-size: 0.78rem; }
 
 .dashboard-grid { display: grid; grid-template-columns: 1fr 0.75fr; gap: 1rem; }
+.dashboard-header { position: relative; }
+.dashboard-title { min-width: 0; }
+.menu-toggle { display: none; }
+.dashboard-menu { display: flex; align-items: center; }
+.dashboard-menu .button { white-space: nowrap; }
 .project-form { display: grid; grid-template-columns: 1fr auto; gap: 0.75rem; }
 .project-form h2, .project-form textarea { grid-column: 1 / -1; }
 .project-form textarea { min-height: 76px; }
@@ -96,11 +101,16 @@ input[type="date"] { color-scheme: dark; }
 .activity-item p { margin: 0; color: var(--muted); font-size: 0.9rem; }
 .activity-item strong { color: var(--text); }
 
-.task-form { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; }
+.task-form { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
 .task-form h2, .task-form > input[type="text"], .task-form > textarea, .label-editor { grid-column: 1 / -1; }
 .task-form h2 { margin-bottom: 0; }
 .task-submit { grid-column: 1 / -1; justify-self: start; }
 
+.task-form .label-editor { margin-top: 0.25rem; }
+.subtask-editor { display: grid; grid-column: 1 / -1; gap: 0.65rem; margin-top: 0.25rem; }
+.subtask-header { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
+.subtask-header h3 { margin: 0; font-size: 0.9rem; }
+.subtask-header .button { flex-shrink: 0; }
 .label-editor h3, .subtask-list h3 { margin-bottom: 0.45rem; font-size: 0.9rem; }
 .label-list { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.55rem; }
 .label-chip { display: inline-flex; align-items: center; gap: 0.25rem; border-radius: 4px; color: #1e40af; background: #e7efff; padding: 0.22rem 0.4rem; font-size: 0.78rem; }
@@ -164,10 +174,21 @@ input[type="date"] { color-scheme: dark; }
 @media (max-width: 520px) {
   h1 { font-size: 1.65rem; }
   .page-header { flex-direction: column; }
+  .dashboard-header { flex-direction: row; align-items: center; }
+  .dashboard-title h1 { margin-bottom: 0.25rem; }
+  .dashboard-title p { font-size: 0.9rem; }
+  .dashboard-header .menu-toggle { display: inline-flex; width: 44px; min-width: 44px; align-items: center; justify-content: center; padding: 0; font-size: 1.25rem; }
+  .dashboard-menu { position: absolute; z-index: 20; top: calc(100% - 1rem); right: 0; display: none; min-width: 150px; padding: 0.5rem; border: 1px solid var(--border); border-radius: 8px; background: var(--panel); box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12); }
+  .dashboard-menu.is-open { display: flex; }
+  .dashboard-menu .button { width: 100%; }
   .page-header .button, .project-form .button, .task-submit { width: 100%; }
   .project-form, .task-form { grid-template-columns: 1fr; }
+  .project-grid { display: flex; gap: 0.75rem; overflow-x: auto; padding-bottom: 0.75rem; scroll-snap-type: x proximity; }
+  .project-card { flex: 0 0 280px; scroll-snap-align: start; }
   .inline-form { flex-direction: column; }
   .inline-form .button { width: 100%; }
+  .subtask-header { align-items: stretch; flex-direction: column; }
+  .subtask-header .button { width: 100%; }
   .kanban-board { grid-template-columns: repeat(5, minmax(250px, 1fr)); }
   .modal-actions { flex-direction: column-reverse; }
   .modal-actions .button { width: 100%; }

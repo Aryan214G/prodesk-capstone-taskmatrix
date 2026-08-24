@@ -8,7 +8,6 @@ import { auth } from "@/lib/firebase";
 import { useSelector } from "react-redux";
 import { getUserProjects } from "@/lib/projects";
 import ProjectForm from "@/components/ProjectForm";
-import MemberForm from "@/components/MemberForm";
 import Link from "next/link";
 import { subscribeToProjectActivity } from "@/lib/activities";
 
@@ -25,6 +24,7 @@ export default function DashboardPage() {
 
   const [projects, setProjects] = useState([]);
   const [activities, setActivities] = useState([]);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     if (!user?.uid) return;
@@ -72,14 +72,30 @@ export default function DashboardPage() {
     <AuthGuard>
       <main className="app-shell dashboard-page">
         <header className="page-header dashboard-header">
-          <div>
+          <div className="dashboard-title">
             <h1>TaskMatrix Dashboard</h1>
             <p>Welcome to your project workspace.</p>
           </div>
 
-          <button className="button button-secondary" onClick={handleLogout}>
-            Logout
+          <button
+            className="menu-toggle button button-secondary"
+            type="button"
+            aria-label="Open navigation menu"
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((current) => !current)}
+          >
+            ☰
           </button>
+
+          <nav className={`dashboard-menu ${menuOpen ? "is-open" : ""}`}>
+            <button
+              className="button button-secondary"
+              type="button"
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
+          </nav>
         </header>
 
         <div className="dashboard-grid">
