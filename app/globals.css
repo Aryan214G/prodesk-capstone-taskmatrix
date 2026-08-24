@@ -178,6 +178,16 @@ input[type="date"] {
   font-size: 0.78rem;
 }
 
+.button-ai {
+  border-color: #8b5cf6;
+  background: linear-gradient(135deg, #7c3aed, #6d28d9);
+  color: white;
+}
+
+.button-ai:hover:not(:disabled) {
+  background: linear-gradient(135deg, #6d28d9, #5b21b6);
+}
+
 .dashboard-grid {
   display: grid;
   grid-template-columns: 1fr 0.75fr;

@@ -249,14 +249,14 @@ export default function TaskForm({
                     <h3>Subtasks</h3>
 
                     <button
-                        className="button button-secondary"
+                        className="button button-ai"
                         type="button"
                         onClick={handleGenerateSubtasks}
                         disabled={generatingSubtasks || loading}
                     >
                         {generatingSubtasks
                             ? "Generating..."
-                            : "Generate with AI"}
+                            : "✨ Generate with AI"}
                     </button>
                 </div>
 
